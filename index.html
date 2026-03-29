@@ -251,6 +251,102 @@ tbody tr:hover{background:#FAFBFF}
   .prod-grid{grid-template-columns:1fr}
   .stat-icon{width:38px;height:38px;font-size:1.1rem}
 }
+
+/* ── DARK MODE ── */
+[data-theme="dark"]{
+  --bg:#0D1117;--surface:#161B27;--border:#252D42;
+  --navy:#0D1117;--text:#F0F4FF;--text2:#A8B8D8;--text3:#6478A0;--text4:#3D4F70;
+  --sh:0 1px 2px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);
+  --sh2:0 8px 32px rgba(0,0,0,.4);
+}
+[data-theme="dark"] .sidebar{background:#0A0F1E}
+[data-theme="dark"] .topbar,[data-theme="dark"] .card,[data-theme="dark"] .stat-card,[data-theme="dark"] .modal,[data-theme="dark"] .lock-card,[data-theme="dark"] .notif-item,[data-theme="dark"] .staff-card,[data-theme="dark"] .prod-card{background:var(--surface);border-color:var(--border)}
+[data-theme="dark"] .form-control,[data-theme="dark"] .fselect,[data-theme="dark"] .search-box input,[data-theme="dark"] .finput{background:#1A2235;border-color:var(--border);color:var(--text)}
+[data-theme="dark"] thead th{background:#1A2235}
+[data-theme="dark"] tbody tr:hover{background:#1A2235}
+[data-theme="dark"] .numkey{background:#1A2235;border-color:var(--border);color:var(--text)}
+[data-theme="dark"] .lock-card{background:#161B27}
+[data-theme="dark"] .lock-title,[data-theme="dark"] .lock-logo-text{color:var(--text)}
+[data-theme="dark"] .flabel,[data-theme="dark"] .form-label{color:var(--text3)}
+[data-theme="dark"] .finput::placeholder,[data-theme="dark"] .form-control::placeholder{color:var(--text4)}
+[data-theme="dark"] .lock-tabs,[data-theme="dark"] .report-tabs{background:#0D1117}
+[data-theme="dark"] .lock-tab.active,[data-theme="dark"] .rtab.active{background:var(--surface)}
+[data-theme="dark"] .btn-outline{border-color:var(--border);color:var(--text2)}
+[data-theme="dark"] .btn-ghost-full{border-color:var(--border);color:var(--text2);background:transparent}
+[data-theme="dark"] .modal-head{background:var(--surface);border-color:var(--border)}
+[data-theme="dark"] .modal-foot,[data-theme="dark"] .card-head,[data-theme="dark"] .prod-btns{border-color:var(--border)}
+[data-theme="dark"] .prod-img{background:linear-gradient(135deg,#1A2235,#252D42)}
+[data-theme="dark"] .filter-bar .fselect,[data-theme="dark"] select.form-control{background:#1A2235;color:var(--text)}
+[data-theme="dark"] input[type="date"]{color-scheme:dark}
+
+/* ── RECEIPT MODAL ── */
+.receipt{font-family:'JetBrains Mono',monospace;background:#fff;color:#111;border-radius:10px;padding:22px;max-width:320px;margin:0 auto;border:1px dashed #D1D5DB}
+.receipt-logo{text-align:center;font-size:1.1rem;font-weight:800;font-family:'Inter',sans-serif;margin-bottom:2px}
+.receipt-sub{text-align:center;font-size:.72rem;color:#6B7280;margin-bottom:14px}
+.receipt-divider{border:none;border-top:1px dashed #D1D5DB;margin:10px 0}
+.receipt-row{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px}
+.receipt-total{font-size:.95rem;font-weight:800}
+.receipt-footer{text-align:center;font-size:.7rem;color:#9CA3AF;margin-top:12px}
+
+/* ── BARCODE PLACEHOLDER ── */
+.barcode-lines{display:flex;gap:1px;height:40px;align-items:flex-end;justify-content:center;margin:10px auto}
+.barcode-lines div{width:2px;background:#111}
+
+/* ── QUICK SALE CARD ── */
+.quick-sale-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;max-height:300px;overflow-y:auto;margin-bottom:12px}
+.qs-card{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s}
+.qs-card:hover{border-color:#2563EB;background:#EFF6FF}
+.qs-card.selected{border-color:#2563EB;background:#EFF6FF;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.qs-emoji{font-size:1.5rem;margin-bottom:4px}
+.qs-name{font-size:.75rem;font-weight:700;color:var(--navy);margin-bottom:2px;line-height:1.2}
+.qs-price{font-size:.78rem;font-weight:700;color:#059669;font-family:'JetBrains Mono',monospace}
+.qs-stock{font-size:.68rem;color:var(--text4)}
+
+/* ── ACTIVITY FEED ── */
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem}
+.activity-body{flex:1;min-width:0}
+.activity-title{font-size:.84rem;font-weight:600;color:var(--text)}
+.activity-meta{font-size:.74rem;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace}
+
+/* ── PROFIT BADGE ── */
+.profit-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:.75rem;font-weight:700}
+.profit-up{background:rgba(16,185,129,.1);color:#059669}
+.profit-down{background:rgba(239,68,68,.1);color:#DC2626}
+
+/* ── CATEGORY PIE ── */
+.cat-pie-list{display:flex;flex-direction:column;gap:8px}
+.cat-pie-item{display:flex;align-items:center;gap:10px}
+.cat-pie-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-pie-label{font-size:.82rem;font-weight:600;flex:1}
+.cat-pie-bar-wrap{height:6px;background:var(--bg);border-radius:99px;overflow:hidden;flex:2}
+.cat-pie-bar{height:100%;border-radius:99px}
+.cat-pie-val{font-size:.78rem;font-family:'JetBrains Mono',monospace;color:var(--text3);min-width:40px;text-align:right}
+
+/* ── INVENTORY VALUE CARD ── */
+.inv-value-card{background:linear-gradient(135deg,#0F1F45,#1E3A8A);color:#fff;border-radius:var(--r);padding:20px;position:relative;overflow:hidden}
+.inv-value-card::after{content:'💎';position:absolute;right:-10px;bottom:-10px;font-size:5rem;opacity:.08}
+.inv-value-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.6);margin-bottom:6px}
+.inv-value-amount{font-size:2rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+.inv-value-sub{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:4px}
+
+/* ── SEARCH OVERLAY ── */
+.search-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:600;display:flex;align-items:flex-start;justify-content:center;padding-top:80px}
+.search-box-big{background:var(--surface);border-radius:16px;width:100%;max-width:560px;box-shadow:var(--sh2);overflow:hidden}
+.search-input-big{width:100%;padding:18px 20px;font-size:1.05rem;border:none;outline:none;background:transparent;color:var(--text)}
+.search-results{max-height:380px;overflow-y:auto}
+.search-result-item{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--border);cursor:pointer;transition:background .15s}
+.search-result-item:hover{background:var(--bg)}
+.search-result-icon{width:36px;height:36px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+
+/* ── STOCK ADJUST MODAL ── */
+.stock-adjust-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.stock-adjust-btn{padding:8px 16px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s;border:1.5px solid var(--border)}
+.stock-adjust-btn:hover{border-color:#2563EB;color:#2563EB;background:rgba(37,99,235,.05)}
+
+/* ── PRINT ── */
+@media print{#lock-screen,#app>.sidebar,.topbar,#toast-wrap{display:none!important}.main{margin:0!important}.receipt{box-shadow:none;border:none}}
 </style>
 </head>
 <body>
@@ -335,7 +431,7 @@ tbody tr:hover{background:#FAFBFF}
       <div><div class="sb-user-name" id="sb-name">Admin</div><div class="sb-user-role" id="sb-role">Administrator</div></div>
     </div>
     <div class="sb-btns">
-      <button class="sb-btn" onclick="exportSalesCSV()">📤 Export</button>
+      <button class="sb-btn" onclick="toggleDark()" id="dark-btn">🌙 Dark</button>
       <button class="sb-btn danger" onclick="doLogout()">🚪 Logout</button>
     </div>
   </div>
@@ -347,7 +443,7 @@ tbody tr:hover{background:#FAFBFF}
     <button class="topbar-menu" onclick="openSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     <div class="topbar-title" id="tb-title">Dashboard</div>
     <div class="topbar-right">
-      <div class="topbar-icon" onclick="goPage('notifications')">
+      <div class="topbar-icon" onclick="openSearch()" title="Quick Search (/)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="topbar-icon" onclick="goPage('notifications')">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="ndot hidden" id="tb-ndot"></span>
       </div>
@@ -371,11 +467,25 @@ tbody tr:hover{background:#FAFBFF}
         <div class="stat-card"><div class="stat-icon" style="background:#FFFBEB">💰</div><div class="stat-info"><div class="label">Today's Revenue</div><div class="value" id="st-rev">$0.00</div><div class="sub" id="st-rev-sub"></div></div></div>
         <div class="stat-card" style="border-left:3px solid #EF4444"><div class="stat-icon" style="background:#FEF2F2">⚠️</div><div class="stat-info"><div class="label">Low / Out Stock</div><div class="value" id="st-low">0</div><div class="sub" style="color:#EF4444">Need restocking</div></div></div>
       </div>
+      <!-- Extra KPI row -->
+      <div class="stats-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:16px">
+        <div class="inv-value-card"><div class="inv-value-label">Inventory Value</div><div class="inv-value-amount" id="st-inv-val">$0.00</div><div class="inv-value-sub" id="st-inv-sub">at cost price</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#EDE9FE">📈</div><div class="stat-info"><div class="label">Today's Profit</div><div class="value" id="st-profit">$0.00</div><div class="sub" id="st-profit-sub"></div></div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#F0FDF4">🏆</div><div class="stat-info"><div class="label">Top Seller Today</div><div class="value" id="st-top" style="font-size:1rem;word-break:break-word">—</div></div></div>
+      </div>
       <div id="dash-grid" style="display:grid;grid-template-columns:1fr 360px;gap:16px">
         <div class="card"><div class="card-head"><h3>📈 Revenue — Last 7 Days</h3></div><div class="card-body"><div style="position:relative"><canvas id="dash-chart" height="200"></canvas></div></div></div>
         <div class="card"><div class="card-head"><h3>⚠️ Low Stock</h3><button class="btn btn-outline btn-sm" onclick="goPage('products')">View all</button></div><div id="low-list" style="padding:0"></div></div>
       </div>
-      <div class="card" style="margin-top:16px"><div class="card-head"><h3>🕐 Recent Sales</h3><button class="btn btn-outline btn-sm" onclick="goPage('sales')">View all</button></div><div id="dash-recent"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px" id="dash-bottom-grid">
+        <div class="card"><div class="card-head"><h3>🕐 Recent Sales</h3><button class="btn btn-outline btn-sm" onclick="goPage('sales')">View all</button></div><div id="dash-recent"></div></div>
+        <div class="card"><div class="card-head"><h3>⚡ Activity Feed</h3></div><div class="card-body" id="activity-feed" style="padding:0 18px"></div></div>
+      </div>
+      <!-- Category Breakdown -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px" id="dash-cat-grid">
+        <div class="card"><div class="card-head"><h3>📊 Sales by Category</h3></div><div class="card-body" id="cat-breakdown"></div></div>
+        <div class="card"><div class="card-head"><h3>💹 Profit Margin</h3></div><div class="card-body" id="profit-breakdown"></div></div>
+      </div>
     </div>
 
     <!-- PRODUCTS -->
@@ -401,14 +511,14 @@ tbody tr:hover{background:#FAFBFF}
         <div><h2>Sales</h2><div class="pg-sub" id="sales-sub"></div></div>
         <div class="pg-actions">
           <button class="btn btn-outline btn-sm" onclick="exportSalesCSV()">📤 Export</button>
-          <button class="btn btn-green btn-sm" onclick="openSaleModal()">+ Record Sale</button>
+          <button class="btn btn-outline btn-sm" onclick="openQuickSale()">⚡ Quick Sale</button><button class="btn btn-green btn-sm" onclick="openSaleModal()">+ Record Sale</button>
         </div>
       </div>
       <div class="filter-bar">
         <div class="search-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="ssearch" placeholder="Search sales…" oninput="renderSales()"/></div>
         <input type="date" class="fselect" id="sdate" onchange="renderSales()"/>
       </div>
-      <div class="card"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Product</th><th>Category</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Cashier</th><th>Date</th></tr></thead><tbody id="sales-tbody"></tbody></table></div></div>
+      <div class="card"><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Product</th><th>Category</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Cashier</th><th>Date</th><th>Receipt</th></tr></thead><tbody id="sales-tbody"></tbody></table></div></div>
     </div>
 
     <!-- REPORTS -->
@@ -452,7 +562,7 @@ tbody tr:hover{background:#FAFBFF}
         <div class="card"><div class="card-head"><h3>🏢 Business Profile</h3></div><div class="card-body">
           <div class="fgrp"><label class="flabel">Business Name</label><input class="form-control" id="set-biz" placeholder="My Store"/></div>
           <div class="fgrp"><label class="flabel">Currency Symbol</label><input class="form-control" id="set-cur" placeholder="$" maxlength="3" style="width:80px"/></div>
-          <div class="fgrp"><label class="flabel">Low Stock Threshold</label><input class="form-control" type="number" id="set-thr" placeholder="10" min="1" style="width:120px"/></div>
+          <div class="fgrp"><label class="flabel">Low Stock Threshold</label><input class="form-control" type="number" id="set-thr" placeholder="10" min="1" style="width:120px"/></div><div class="fgrp"><label class="flabel">Store Address (for receipts)</label><input class="form-control" id="set-addr" placeholder="123 Main St, City"/></div>
           <button class="btn btn-blue btn-sm" onclick="saveSettings()">Save Changes</button>
         </div></div>
         <div class="card"><div class="card-head"><h3>🔐 Change Admin PIN</h3></div><div class="card-body">
@@ -539,6 +649,73 @@ tbody tr:hover{background:#FAFBFF}
     <div class="fgrp"><label class="flabel">Phone</label><input class="form-control" id="stm-phone" placeholder="+234 800 000 0000"/></div>
   </div>
   <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal('staff-modal')">Cancel</button><button class="btn btn-blue" onclick="saveStaff()">Save Staff Member</button></div>
+  </div>
+</div>
+
+
+<!-- RECEIPT MODAL -->
+<div id="receipt-modal" class="modal-overlay hidden">
+  <div class="modal modal-sm">
+    <div class="modal-head"><h3>🧾 Sale Receipt</h3><button class="modal-close" onclick="closeModal('receipt-modal')">✕</button></div>
+    <div class="modal-body" id="receipt-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('receipt-modal')">Close</button>
+      <button class="btn btn-blue" onclick="printReceipt()">🖨️ Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK SALE MODAL -->
+<div id="quicksale-modal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head"><h3>⚡ Quick Sale</h3><button class="modal-close" onclick="closeModal('quicksale-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px"><input class="form-control" id="qs-search" placeholder="🔍 Search product…" oninput="renderQuickSaleGrid()" autocomplete="off"/></div>
+      <div class="quick-sale-grid" id="qs-grid"></div>
+      <div id="qs-selected-info" class="info-box hidden"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px" id="qs-form" class="hidden">
+        <div class="fgrp"><label class="flabel">Qty</label><input class="form-control" type="number" id="qs-qty" value="1" min="1" oninput="updateQSTotal()"/></div>
+        <div class="fgrp"><label class="flabel">Unit Price</label><input class="form-control" type="number" id="qs-price" readonly/></div>
+        <div class="fgrp"><label class="flabel">Customer</label><input class="form-control" id="qs-cust" placeholder="Walk-in"/></div>
+      </div>
+      <div class="sale-total" id="qs-total"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('quicksale-modal')">Cancel</button>
+      <button class="btn btn-green" onclick="saveQuickSale()">✓ Record Sale</button>
+    </div>
+  </div>
+</div>
+
+<!-- STOCK ADJUST MODAL -->
+<div id="stock-modal" class="modal-overlay hidden">
+  <div class="modal modal-sm">
+    <div class="modal-head"><h3>📦 Adjust Stock</h3><button class="modal-close" onclick="closeModal('stock-modal')">✕</button></div>
+    <div class="modal-body">
+      <div id="stock-prod-info" style="font-weight:700;font-size:.95rem;color:var(--navy);margin-bottom:14px"></div>
+      <div class="fgrp"><label class="flabel">Adjustment Type</label>
+        <select class="form-control" id="sa-type">
+          <option value="add">➕ Add Stock (Restock)</option>
+          <option value="remove">➖ Remove Stock (Damage/Expiry)</option>
+          <option value="set">📌 Set Exact Quantity</option>
+        </select>
+      </div>
+      <div class="fgrp"><label class="flabel">Quantity</label><input class="form-control" type="number" id="sa-qty" placeholder="Enter quantity" min="0"/></div>
+      <div class="fgrp"><label class="flabel">Reason / Note</label><input class="form-control" id="sa-reason" placeholder="e.g. Received from supplier"/></div>
+      <input type="hidden" id="sa-prod-id"/>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('stock-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveStockAdjust()">Apply Adjustment</button>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL SEARCH OVERLAY -->
+<div id="search-overlay" class="search-overlay hidden" onclick="closeSearch(event)">
+  <div class="search-box-big" onclick="event.stopPropagation()">
+    <input class="search-input-big" id="global-search-input" placeholder="Search products, sales, staff…" oninput="doGlobalSearch()" autocomplete="off"/>
+    <div class="search-results" id="search-results"></div>
   </div>
 </div>
 
@@ -733,7 +910,7 @@ function renderProducts() {
           <span class="prod-qty ${out?'out':low?'low':'ok'}">${out?'Out of stock':p.quantity+' units'}</span>
         </div>
         <div class="prod-btns">
-          <button class="btn btn-outline btn-sm" style="flex:1;font-size:.78rem" onclick="openProductModal('${p.id}')">✏️ Edit</button>
+          <button class="btn btn-outline btn-sm" style="flex:1;font-size:.78rem" onclick="openProductModal('${p.id}')">✏️ Edit</button><button class="btn btn-outline btn-sm" style="font-size:.78rem;color:#2563EB" onclick="openStockModal('${p.id}')">📦</button>
           <button class="btn btn-red btn-sm" style="font-size:.78rem" onclick="openDeleteModal('${p.id}','${esc(p.name)}')">🗑</button>
         </div>
       </div>
@@ -997,6 +1174,337 @@ document.addEventListener('keydown',e=>{
 function adjGrid(){const sm=window.innerWidth<900;const dg=g('dash-grid');const rg=g('rpt-grid');if(dg)dg.style.gridTemplateColumns=sm?'1fr':'1fr 360px';if(rg)rg.style.gridTemplateColumns=sm?'1fr':'2fr 1fr';}
 window.addEventListener('resize',()=>{adjGrid();const a=g('page-dashboard');if(a&&a.classList.contains('active'))drawChart('dash-chart',7);});
 adjGrid();
+
+
+// ════════════════════════════════════════════
+//  ADVANCED FEATURES
+// ════════════════════════════════════════════
+
+// ── DARK MODE ────────────────────────────────────────
+let darkMode = localStorage.getItem('sp_dark') === '1';
+function applyDark() {
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  const btn = g('dark-btn');
+  if (btn) btn.textContent = darkMode ? '☀️ Light' : '🌙 Dark';
+}
+function toggleDark() { darkMode = !darkMode; localStorage.setItem('sp_dark', darkMode ? '1' : '0'); applyDark(); }
+applyDark();
+
+// ── INVENTORY VALUE + PROFIT KPIs ───────────────────
+function renderKPIs() {
+  const today     = new Date().toDateString();
+  const todayS    = sales.filter(s => new Date(s.timestamp).toDateString() === today);
+  const invValue  = prods.reduce((a, p) => a + (p.costPrice || 0) * p.quantity, 0);
+  const invSell   = prods.reduce((a, p) => a + (p.price || 0) * p.quantity, 0);
+  const todayRev  = todayS.reduce((a, s) => a + (s.total || 0), 0);
+  const todayCost = todayS.reduce((a, s) => {
+    const p = prods.find(x => x.id === s.productId);
+    return a + (p ? (p.costPrice || 0) * s.quantity : 0);
+  }, 0);
+  const profit = todayRev - todayCost;
+
+  if (g('st-inv-val')) g('st-inv-val').textContent = fmt(invValue);
+  if (g('st-inv-sub')) g('st-inv-sub').textContent = 'retail value: ' + fmt(invSell);
+  if (g('st-profit'))  g('st-profit').textContent  = fmt(profit);
+  if (g('st-profit-sub')) {
+    const margin = todayRev > 0 ? ((profit / todayRev) * 100).toFixed(1) : 0;
+    g('st-profit-sub').innerHTML = `<span class="profit-badge ${profit >= 0 ? 'profit-up' : 'profit-down'}">${profit >= 0 ? '▲' : '▼'} ${Math.abs(margin)}% margin</span>`;
+  }
+
+  // Top seller today
+  const pMap = {};
+  todayS.forEach(s => pMap[s.productName] = (pMap[s.productName] || 0) + s.quantity);
+  const topSeller = Object.entries(pMap).sort((a, b) => b[1] - a[1])[0];
+  if (g('st-top')) g('st-top').textContent = topSeller ? topSeller[0] : '—';
+}
+
+// ── ACTIVITY FEED ────────────────────────────────────
+function renderActivityFeed() {
+  const el = g('activity-feed'); if (!el) return;
+  const events = [];
+  sales.slice().sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 4).forEach(s => {
+    events.push({ icon: '💳', color: 'rgba(16,185,129,.12)', title: `<strong>${esc(s.cashier||'Staff')}</strong> sold ${s.quantity}× ${esc(s.productName)}`, meta: fmtDT(s.timestamp) + ' · ' + fmt(s.total) });
+  });
+  prods.filter(p => p.quantity === 0).slice(0, 2).forEach(p => {
+    events.push({ icon: '⚠️', color: 'rgba(239,68,68,.1)', title: `<strong>${esc(p.name)}</strong> is out of stock`, meta: 'Needs restocking' });
+  });
+  if (!events.length) { el.innerHTML = '<div style="padding:20px;text-align:center;color:#9CA3AF;font-size:.84rem">No recent activity</div>'; return; }
+  el.innerHTML = events.slice(0, 5).map(ev => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${ev.color}">${ev.icon}</div>
+      <div class="activity-body"><div class="activity-title">${ev.title}</div><div class="activity-meta">${ev.meta}</div></div>
+    </div>`).join('');
+}
+
+// ── CATEGORY BREAKDOWN ───────────────────────────────
+const CAT_COLORS = ['#2563EB','#10B981','#F59E0B','#8B5CF6','#EF4444','#0891B2','#EC4899'];
+function renderCatBreakdown() {
+  const el = g('cat-breakdown'); if (!el) return;
+  const map = {};
+  sales.forEach(s => map[s.category || 'Other'] = (map[s.category || 'Other'] || 0) + (s.total || 0));
+  const entries = Object.entries(map).sort((a,b) => b[1] - a[1]).slice(0, 6);
+  const total   = entries.reduce((a,e) => a + e[1], 0) || 1;
+  el.innerHTML = entries.length ? `<div class="cat-pie-list">${
+    entries.map(([cat, val], i) => `
+      <div class="cat-pie-item">
+        <div class="cat-pie-dot" style="background:${CAT_COLORS[i % CAT_COLORS.length]}"></div>
+        <span class="cat-pie-label">${esc(cat)}</span>
+        <div class="cat-pie-bar-wrap"><div class="cat-pie-bar" style="width:${(val/total*100).toFixed(0)}%;background:${CAT_COLORS[i%CAT_COLORS.length]}"></div></div>
+        <span class="cat-pie-val">${fmt(val)}</span>
+      </div>`).join('')
+  }</div>` : '<div style="color:#9CA3AF;font-size:.84rem;text-align:center;padding:16px">No sales data yet</div>';
+}
+
+function renderProfitBreakdown() {
+  const el = g('profit-breakdown'); if (!el) return;
+  const top = prods.map(p => {
+    const sold = sales.filter(s => s.productId === p.id).reduce((a,s) => a + s.quantity, 0);
+    const rev  = sold * p.price;
+    const cost = sold * (p.costPrice || 0);
+    return { name: p.name, profit: rev - cost, margin: rev > 0 ? ((rev - cost) / rev * 100) : 0, sold };
+  }).filter(p => p.sold > 0).sort((a,b) => b.profit - a.profit).slice(0, 5);
+
+  el.innerHTML = top.length ? top.map((p, i) => `
+    <div style="margin-bottom:11px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:.82rem;font-weight:600">${esc(p.name)}</span>
+        <span class="profit-badge ${p.profit >= 0 ? 'profit-up' : 'profit-down'}">${fmt(p.profit)}</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${Math.min(100, p.margin).toFixed(0)}%;background:${p.profit >= 0 ? CAT_COLORS[i%CAT_COLORS.length] : '#EF4444'}"></div></div>
+      <div style="font-size:.72rem;color:#9CA3AF;margin-top:2px">${p.sold} units · ${p.margin.toFixed(1)}% margin</div>
+    </div>`).join('')
+  : '<div style="color:#9CA3AF;font-size:.84rem;text-align:center;padding:16px">No profit data yet</div>';
+}
+
+// ── ENHANCED DASHBOARD ───────────────────────────────
+const _origRenderDashboard = renderDashboard;
+renderDashboard = function() {
+  _origRenderDashboard();
+  renderKPIs();
+  renderActivityFeed();
+  renderCatBreakdown();
+  renderProfitBreakdown();
+  // Adjust bottom grids
+  const sm = window.innerWidth < 900;
+  const bg = g('dash-bottom-grid'); if(bg) bg.style.gridTemplateColumns = sm ? '1fr' : '1fr 1fr';
+  const cg = g('dash-cat-grid');   if(cg) cg.style.gridTemplateColumns = sm ? '1fr' : '1fr 1fr';
+};
+
+// ── RECEIPT ──────────────────────────────────────────
+function showReceipt(saleId) {
+  const s = sales.find(x => x.id === saleId); if (!s) return;
+  const addr = localStorage.getItem('sp_addr') || '';
+  const barcodeLines = Array.from({length: 30}, (_,i) =>
+    `<div style="width:${i%3===0?3:i%5===0?4:2}px;height:${30+Math.sin(i)*10}px;background:#111"></div>`
+  ).join('');
+  g('receipt-body').innerHTML = `
+    <div class="receipt">
+      <div class="receipt-logo">${esc(cfg.bizName || 'My Store')}</div>
+      <div class="receipt-sub">${esc(addr)}<br>Receipt #${s.id.slice(-6).toUpperCase()}</div>
+      <hr class="receipt-divider"/>
+      <div class="receipt-row"><span>${esc(s.productName)}</span><span></span></div>
+      <div class="receipt-row"><span style="color:#6B7280">  ${s.quantity} × ${fmt(s.unitPrice)}</span><span>${fmt(s.total)}</span></div>
+      <hr class="receipt-divider"/>
+      <div class="receipt-row receipt-total"><span>TOTAL</span><span>${fmt(s.total)}</span></div>
+      <hr class="receipt-divider"/>
+      <div class="receipt-row"><span style="color:#6B7280">Cashier</span><span>${esc(s.cashier||'—')}</span></div>
+      <div class="receipt-row"><span style="color:#6B7280">Date</span><span>${fmtDT(s.timestamp)}</span></div>
+      ${s.customer ? `<div class="receipt-row"><span style="color:#6B7280">Customer</span><span>${esc(s.customer)}</span></div>` : ''}
+      <hr class="receipt-divider"/>
+      <div style="display:flex;gap:1px;height:40px;align-items:flex-end;justify-content:center;margin:6px auto">${barcodeLines}</div>
+      <div class="receipt-footer">Thank you for your purchase!<br>Powered by StockPilot</div>
+    </div>`;
+  showModal('receipt-modal');
+}
+
+function printReceipt() {
+  const body = g('receipt-body').innerHTML;
+  const w = window.open('', '_blank', 'width=400,height=600');
+  w.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px}*{box-sizing:border-box}</style></head><body>' + body + '<script>window.onload=()=>window.print()</' + 'script></body></html>');
+  w.document.close();
+}
+
+// ── ENHANCED SALES TABLE with receipt button ─────────
+const _origRenderSales = renderSales;
+renderSales = function() {
+  _origRenderSales();
+  // Add receipt buttons to each row
+  const rows = g('sales-tbody')?.querySelectorAll('tr') || [];
+  const sortedSales = sales.filter(s => {
+    const q = (g('ssearch')?.value||'').toLowerCase();
+    const date = g('sdate')?.value||'';
+    return (!q||s.productName.toLowerCase().includes(q)||(s.cashier||'').toLowerCase().includes(q)) &&
+           (!date||new Date(s.timestamp).toISOString().slice(0,10)===date);
+  }).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  rows.forEach((row, i) => {
+    if (sortedSales[i]) {
+      const td = document.createElement('td');
+      td.innerHTML = `<button class="btn btn-outline btn-sm" style="font-size:.75rem" onclick="showReceipt('${sortedSales[i].id}')">🧾</button>`;
+      row.appendChild(td);
+    }
+  });
+};
+
+// ── QUICK SALE ───────────────────────────────────────
+let qsSelected = null;
+const EM2 = {'Medicine':'💊','Supplements':'💪','Hygiene':'🧴','Dairy':'🥛','Bakery':'🍞','Beverages':'🥤','Frozen':'🧊','Snacks':'🍿','Household':'🏠','Electronics':'⚡','Clothing':'👕','Cosmetics':'💄','Stationery':'📝'};
+
+function openQuickSale() {
+  qsSelected = null;
+  if(g('qs-search')) g('qs-search').value = '';
+  if(g('qs-selected-info')) g('qs-selected-info').classList.add('hidden');
+  if(g('qs-form')) g('qs-form').classList.add('hidden');
+  if(g('qs-total')) g('qs-total').textContent = '';
+  renderQuickSaleGrid();
+  showModal('quicksale-modal');
+  setTimeout(() => g('qs-search') && g('qs-search').focus(), 200);
+}
+
+function renderQuickSaleGrid() {
+  const q = (g('qs-search')?.value || '').toLowerCase();
+  const available = prods.filter(p => p.quantity > 0 && (!q || p.name.toLowerCase().includes(q))).slice(0, 20);
+  const el = g('qs-grid'); if (!el) return;
+  el.innerHTML = available.length ? available.map(p => `
+    <div class="qs-card ${qsSelected?.id === p.id ? 'selected' : ''}" onclick="selectQSProd('${p.id}')">
+      <div class="qs-emoji">${EM2[p.category]||'📦'}</div>
+      <div class="qs-name">${esc(p.name)}</div>
+      <div class="qs-price">${fmt(p.price)}</div>
+      <div class="qs-stock">${p.quantity} left</div>
+    </div>`).join('')
+  : '<div style="grid-column:1/-1;text-align:center;color:#9CA3AF;padding:20px;font-size:.85rem">No products found</div>';
+}
+
+function selectQSProd(id) {
+  qsSelected = prods.find(p => p.id === id); if (!qsSelected) return;
+  renderQuickSaleGrid();
+  if (g('qs-selected-info')) { g('qs-selected-info').textContent = qsSelected.name + ' · ' + fmt(qsSelected.price) + ' each · ' + qsSelected.quantity + ' in stock'; g('qs-selected-info').classList.remove('hidden'); }
+  if (g('qs-price')) g('qs-price').value = qsSelected.price.toFixed(2);
+  if (g('qs-qty'))   { g('qs-qty').value = '1'; g('qs-qty').max = qsSelected.quantity; }
+  if (g('qs-form'))  g('qs-form').classList.remove('hidden');
+  updateQSTotal();
+}
+
+function updateQSTotal() {
+  const q = parseInt(g('qs-qty')?.value) || 0;
+  const p = parseFloat(g('qs-price')?.value) || 0;
+  if (g('qs-total')) g('qs-total').textContent = q > 0 && p > 0 ? 'Total: ' + fmt(q * p) : '';
+}
+
+function saveQuickSale() {
+  if (!qsSelected) return toast('Select a product first', 'error');
+  const qty   = parseInt(g('qs-qty')?.value) || 0;
+  const price = parseFloat(g('qs-price')?.value) || 0;
+  const cust  = g('qs-cust')?.value.trim() || '';
+  if (qty < 1) return toast('Enter a valid quantity', 'error');
+  if (qty > qsSelected.quantity) return toast('Not enough stock!', 'error');
+  const saleId = 'sl' + Date.now();
+  sales.push({ id: saleId, productId: qsSelected.id, productName: qsSelected.name, category: qsSelected.category, quantity: qty, unitPrice: price, total: qty * price, cashier: me?.name || 'Admin', customer: cust, timestamp: new Date() });
+  qsSelected.quantity -= qty;
+  save(); checkLowStock(); renderDashboard(); renderSales();
+  closeModal('quicksale-modal');
+  toast('Sale recorded! ' + fmt(qty * price), 'success');
+  setTimeout(() => showReceipt(saleId), 400);
+}
+
+// ── STOCK ADJUSTMENT ─────────────────────────────────
+function openStockModal(prodId) {
+  const p = prods.find(x => x.id === prodId); if (!p) return;
+  if (g('stock-prod-info')) g('stock-prod-info').textContent = p.name + ' — Current stock: ' + p.quantity + ' units';
+  if (g('sa-prod-id'))  g('sa-prod-id').value = prodId;
+  if (g('sa-qty'))      g('sa-qty').value = '';
+  if (g('sa-reason'))   g('sa-reason').value = '';
+  if (g('sa-type'))     g('sa-type').value = 'add';
+  showModal('stock-modal');
+}
+
+function saveStockAdjust() {
+  const pid    = g('sa-prod-id')?.value;
+  const type   = g('sa-type')?.value;
+  const qty    = parseInt(g('sa-qty')?.value);
+  const reason = g('sa-reason')?.value.trim() || '';
+  if (!pid) return;
+  if (isNaN(qty) || qty < 0) return toast('Enter a valid quantity', 'error');
+  const p = prods.find(x => x.id === pid); if (!p) return;
+  const old = p.quantity;
+  if (type === 'add')    p.quantity += qty;
+  else if (type === 'remove') { if (qty > p.quantity) return toast('Cannot remove more than current stock', 'error'); p.quantity -= qty; }
+  else if (type === 'set')    p.quantity = qty;
+  save(); renderProducts(); renderDashboard();
+  addNotif('info', 'Stock Adjusted', `${p.name}: ${old} → ${p.quantity} units. ${reason}`);
+  closeModal('stock-modal');
+  toast('Stock updated: ' + p.name + ' now has ' + p.quantity + ' units', 'success');
+}
+
+// ── GLOBAL SEARCH ────────────────────────────────────
+function openSearch() {
+  g('search-overlay').classList.remove('hidden');
+  if (g('global-search-input')) { g('global-search-input').value = ''; g('global-search-input').focus(); }
+  if (g('search-results')) g('search-results').innerHTML = '<div style="padding:16px 18px;color:#9CA3AF;font-size:.85rem">Type to search products, sales, staff…</div>';
+}
+
+function closeSearch(e) {
+  if (!e || e.target === g('search-overlay')) g('search-overlay').classList.add('hidden');
+}
+
+function doGlobalSearch() {
+  const q = (g('global-search-input')?.value || '').toLowerCase().trim();
+  const el = g('search-results'); if (!el) return;
+  if (!q) { el.innerHTML = '<div style="padding:16px 18px;color:#9CA3AF;font-size:.85rem">Type to search…</div>'; return; }
+
+  const results = [];
+  prods.filter(p => p.name.toLowerCase().includes(q) || (p.sku||'').toLowerCase().includes(q)).slice(0, 5).forEach(p => {
+    results.push({ icon: EM2[p.category]||'📦', title: p.name, sub: p.category + ' · ' + fmt(p.price) + ' · ' + p.quantity + ' in stock', action: () => { g('search-overlay').classList.add('hidden'); goPage('products'); setTimeout(() => { if(g('psearch')){g('psearch').value=p.name; renderProducts();} }, 200); } });
+  });
+  sales.filter(s => s.productName.toLowerCase().includes(q) || (s.cashier||'').toLowerCase().includes(q)).slice(0, 3).forEach(s => {
+    results.push({ icon: '💳', title: s.productName + ' · ' + fmt(s.total), sub: 'Sale by ' + (s.cashier||'—') + ' · ' + fmtDT(s.timestamp), action: () => { g('search-overlay').classList.add('hidden'); goPage('sales'); } });
+  });
+  staff.filter(s => s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)).slice(0, 2).forEach(s => {
+    results.push({ icon: '👤', title: s.name, sub: s.email + ' · ' + s.role, action: () => { g('search-overlay').classList.add('hidden'); goPage('staff'); } });
+  });
+
+  el.innerHTML = results.length ? results.map((r, i) => `
+    <div class="search-result-item" onclick="searchResults[${i}].action()">
+      <div class="search-result-icon">${r.icon}</div>
+      <div><div style="font-size:.9rem;font-weight:700;color:var(--navy)">${esc(r.title)}</div><div style="font-size:.77rem;color:#9CA3AF;margin-top:2px">${esc(r.sub)}</div></div>
+    </div>`).join('')
+  : '<div style="padding:16px 18px;color:#9CA3AF;font-size:.85rem">No results found for "<strong>' + esc(q) + '</strong>"</div>';
+
+  // Store references for onclick
+  window.searchResults = results;
+}
+
+// ── SAVE STORE ADDRESS ───────────────────────────────
+const _origSaveSettings = saveSettings;
+saveSettings = function() {
+  _origSaveSettings();
+  const addr = g('set-addr')?.value || '';
+  localStorage.setItem('sp_addr', addr);
+};
+
+// Restore address field on load
+if (g('set-addr')) g('set-addr').value = localStorage.getItem('sp_addr') || '';
+
+// ── EXTRA KEYBOARD SHORTCUTS ─────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+    e.preventDefault(); openSearch();
+  }
+  if (e.key === 'Escape') g('search-overlay')?.classList.add('hidden');
+});
+
+// ── RESPONSIVE DASHBOARD GRIDS ───────────────────────
+function adjAllGrids() {
+  adjGrid();
+  const sm = window.innerWidth < 900;
+  const bg = g('dash-bottom-grid'); if(bg) bg.style.gridTemplateColumns = sm ? '1fr' : '1fr 1fr';
+  const cg = g('dash-cat-grid');   if(cg) cg.style.gridTemplateColumns = sm ? '1fr' : '1fr 1fr';
+}
+window.addEventListener('resize', adjAllGrids);
+adjAllGrids();
+
+console.log('%c StockPilot PRO ✓ Advanced features loaded ', 'background:#2563EB;color:white;padding:4px 8px;border-radius:4px;font-weight:bold');
+
 </script>
 </body>
 </html>
