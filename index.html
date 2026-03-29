@@ -1511,11 +1511,17 @@ function buildDemoSales(products) {
   return sales.sort((a,b) => b.timestamp - a.timestamp);
 }
 
+// ── ADMIN CREDENTIALS (bypass Firebase for owner) ──
+const ADMIN_EMAIL    = 'oladejiridwanopeyemi@gmail.com';
+const ADMIN_PASSWORD = 'Ocrown123@';
+
 // ── AUTH ─────────────────────────────────────────
 auth.onAuthStateChanged(async user => {
   if (user) {
     currentUser = user;
     await loadUserData();
+    // Mark as admin if it's the owner account
+    if (user.email === ADMIN_EMAIL) userRole = 'admin';
     showApp();
     subscribeData();
   } else if (!isDemoMode) {
@@ -1532,6 +1538,35 @@ function handleLogin() {
   if (!email || !pass) return showAuthErr('Fill in all fields.');
   hideAuthErr();
   setBtn('login-btn', true);
+
+  // ── ADMIN BYPASS: works even without Firebase Auth setup ──
+  if (email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
+    // Try Firebase first; if it fails, use local admin session
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => setBtn('login-btn', false))
+      .catch(() => {
+        // Firebase failed — start a direct admin session
+        isDemoMode = false;
+        currentUser = {
+          uid: 'admin-local',
+          email: ADMIN_EMAIL,
+          displayName: 'Ridwan Opeyemi (Admin)'
+        };
+        userRole = 'admin';
+        settings = { currency: '$', threshold: 10, bizName: 'StockPilot Store', displayName: 'Ridwan Opeyemi' };
+        allProducts = [];
+        allSales    = [];
+        allNotifs   = [];
+        setBtn('login-btn', false);
+        showApp();
+        // Try to connect Firestore even in local admin mode
+        try { subscribeData(); } catch(e) { renderAll(); }
+        toast('Signed in as Admin ✅', 'success');
+      });
+    return;
+  }
+
+  // ── STAFF LOGIN via Firebase ──
   auth.signInWithEmailAndPassword(email, pass)
     .then(() => setBtn('login-btn', false))
     .catch(e => { showAuthErr(friendlyErr(e.code)); setBtn('login-btn', false); });
@@ -1578,6 +1613,9 @@ function handleLogout() {
 
 async function loadUserData() {
   if (!currentUser || isDemoMode) return;
+  if (currentUser.uid === 'admin-local') {
+    userRole = 'admin'; return;
+  }
   try {
     const doc = await db.collection('users').doc(currentUser.uid).get();
     if (doc.exists) {
@@ -1586,7 +1624,7 @@ async function loadUserData() {
       settings.threshold   = d.threshold   || 10;
       settings.bizName     = d.bizName     || 'My Store';
       settings.displayName = d.displayName || currentUser.displayName || '';
-      userRole             = d.role        || 'staff';
+      userRole             = d.role        || (currentUser.email === ADMIN_EMAIL ? 'admin' : 'staff');
     }
   } catch(e) { console.warn('loadUserData:', e); }
 }
@@ -1635,7 +1673,7 @@ function subscribeData() {
     .onSnapshot(snap => {
       allProducts = snap.docs.map(d => ({ id:d.id, ...d.data() }));
       renderAll(); checkLowStock();
-    }, err => { console.error(err); fallbackToDemo(); });
+    }, err => { console.warn('Firestore products:', err.code); renderAll(); });
 
   const u2 = db.collection('sales').orderBy('timestamp','desc')
     .onSnapshot(snap => {
