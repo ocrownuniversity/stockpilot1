@@ -264,59 +264,12 @@ tbody tr:hover{background:#F8FAFC}
 <body>
 
 <!-- ══════════════════ AUTH SCREEN ══════════════════ -->
-<!-- PIN LOCK -->
-<div id="auth-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0A1628;position:relative;overflow:hidden;padding:24px;">
-  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
-  <div style="position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(15,76,129,.5) 0%,transparent 70%);pointer-events:none;"></div>
-  <div class="pin-card" style="background:#fff;border-radius:24px;padding:40px 36px;width:100%;max-width:380px;position:relative;z-index:1;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;animation:slideUp .5s ease;">
-    <div style="width:64px;height:64px;background:linear-gradient(135deg,#0F4C81,#4F46E5);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 8px 24px rgba(15,76,129,.4);font-size:1.8rem;">📦</div>
-    <div style="font-size:1.5rem;font-weight:800;color:#0A1628;letter-spacing:-.5px;margin-bottom:6px;">StockPilot PRO</div>
-    <div style="font-size:.88rem;color:#64748B;margin-bottom:28px;">Enter your 4-digit admin PIN</div>
-
-    <!-- PIN dots -->
-    <div style="display:flex;gap:14px;justify-content:center;margin-bottom:28px;" id="pin-dots-row">
-      <div class="pdot" id="pd0"></div>
-      <div class="pdot" id="pd1"></div>
-      <div class="pdot" id="pd2"></div>
-      <div class="pdot" id="pd3"></div>
-    </div>
-
-    <!-- Number pad -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-      <button class="pkey" onclick="pk('1')">1</button>
-      <button class="pkey" onclick="pk('2')">2</button>
-      <button class="pkey" onclick="pk('3')">3</button>
-      <button class="pkey" onclick="pk('4')">4</button>
-      <button class="pkey" onclick="pk('5')">5</button>
-      <button class="pkey" onclick="pk('6')">6</button>
-      <button class="pkey" onclick="pk('7')">7</button>
-      <button class="pkey" onclick="pk('8')">8</button>
-      <button class="pkey" onclick="pk('9')">9</button>
-      <button class="pkey" onclick="pk('0')" style="grid-column:span 2;">0</button>
-      <button class="pkey" onclick="pdel()" style="font-size:1rem;">⌫</button>
-    </div>
-
-    <div id="pin-err" style="display:none;background:#FEF2F2;border:1px solid #FECACA;color:#EF4444;border-radius:8px;padding:10px 14px;font-size:.85rem;margin-top:10px;">❌ Wrong PIN. Please try again.</div>
-    <div style="margin-top:16px;border-top:1px solid #E2E8F0;padding-top:16px;">
-      <button onclick="demoAccess()" style="width:100%;padding:10px;background:transparent;border:1.5px solid #E2E8F0;border-radius:8px;font-size:.88rem;font-weight:600;color:#64748B;cursor:pointer;font-family:inherit;">🧪 Try Demo Mode</button>
-    </div>
-    <div style="margin-top:14px;font-size:.75rem;color:#94A3B8;">Admin PIN: <strong>2580</strong> &nbsp;|&nbsp; Change in Settings</div>
-  </div>
-</div>
-
-<style>
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.pdot{width:16px;height:16px;border-radius:50%;border:2px solid #CBD5E1;background:transparent;transition:all .2s;}
-.pdot.on{background:#0F4C81;border-color:#0F4C81;transform:scale(1.2);}
-.pdot.err{background:#EF4444;border-color:#EF4444;}
-.pkey{height:60px;border-radius:12px;background:#F4F6FA;border:1.5px solid #E2E8F0;font-size:1.4rem;font-weight:700;color:#0A1628;cursor:pointer;transition:all .15s;font-family:inherit;}
-.pkey:hover{background:#0F4C81;color:#fff;border-color:#0F4C81;transform:scale(1.05);}
-.pkey:active{transform:scale(.95);}
-</style>
 
 
+<!-- Register Modal -->
+
+
+<!-- ══════════════════ MAIN APP ══════════════════ -->
 <div id="app" class="app hidden">
   <!-- Sidebar -->
   <aside id="sidebar" class="sidebar">
@@ -483,35 +436,21 @@ tbody tr:hover{background:#F8FAFC}
 
 <div id="toast" class="toast hidden"></div>
 
-
-<div id="toast" class="toast hidden"></div>
-
 <!-- Firebase SDKs (compat version — no import/export needed) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* ══════════════════════════════════════════════
-   STOCKPILOT — Full Application Logic
-══════════════════════════════════════════════ */
-
-// ── FIREBASE CONFIG ──
-const firebaseConfig = {
-  apiKey:            "AIzaSyCurDXcv7g1hGn6YmjhXPh9DkePzuf7V6E",
-  authDomain:        "stockpilot-a7c25.firebaseapp.com",
-  projectId:         "stockpilot-a7c25",
-  storageBucket:     "stockpilot-a7c25.firebasestorage.app",
-  messagingSenderId: "690250202656",
-  appId:             "1:690250202656:web:e729752a58947405dac645"
-};
-
+'use strict';
+const firebaseConfig={apiKey:'AIzaSyCurDXcv7g1hGn6YmjhXPh9DkePzuf7V6E',authDomain:'stockpilot-a7c25.firebaseapp.com',projectId:'stockpilot-a7c25',storageBucket:'stockpilot-a7c25.firebasestorage.app',messagingSenderId:'690250202656',appId:'1:690250202656:web:e729752a58947405dac645'};
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db   = firebase.firestore();
+const db=firebase.firestore();
+let currentUser={uid:'owner',email:'admin@stockpilot',displayName:'Admin'};
+let userRole='admin',isDemoMode=false;
+let allProducts=[],allSales=[],allNotifs=[];
+let settings={currency:'$',threshold:10,bizName:'StockPilot',displayName:'Admin'};
+let deleteTargetId=null,currentReport='daily',unsubscribers=[];
 
-// ── APP STATE (declared in PIN section below) ──
-
-// ── DEMO DATA ──
 const DEMO_PRODUCTS = [
   { id:'d1', name:'Paracetamol 500mg',   category:'Medicine',     price:2.50,  quantity:45,  supplier:'PharmaCo',  dateAdded: new Date().toISOString() },
   { id:'d2', name:'Vitamin C 1000mg',    category:'Supplements',  price:8.99,  quantity:120, supplier:'NutraPlus', dateAdded: new Date().toISOString() },
@@ -530,749 +469,58 @@ const DEMO_SALES = [
   { id:'s5', productId:'d6', productName:'Bread Loaf',        quantity:4, unitPrice:2.10,  total:8.40,  timestamp: new Date(Date.now()-172800000) },
 ];
 
-// ═══════════════════════════════════════
-//  PIN ACCESS — no Firebase login needed
-// ═══════════════════════════════════════
-const ADMIN_PIN  = '2580';   // ← Your secret 4-digit PIN
-let pinBuffer    = '';
-let currentUser  = null;
-let isDemoMode   = false;
-let userRole     = 'admin';
-let unsubscribers = [];
-
-function pk(digit) {
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += digit;
-  updateDots();
-  if (pinBuffer.length === 4) setTimeout(checkPin, 150);
-}
-
-function pdel() {
-  pinBuffer = pinBuffer.slice(0, -1);
-  updateDots();
-  document.getElementById('pin-err').style.display = 'none';
-}
-
-function updateDots() {
-  for (let i = 0; i < 4; i++) {
-    const d = document.getElementById('pd' + i);
-    if (!d) continue;
-    d.className = 'pdot' + (i < pinBuffer.length ? ' on' : '');
-  }
-}
-
-function checkPin() {
-  if (pinBuffer === ADMIN_PIN) {
-    currentUser = { uid:'admin', email:'admin@stockpilot', displayName:'Admin' };
-    userRole    = 'admin';
-    settings    = { currency:'$', threshold:10, bizName:'StockPilot Store', displayName:'Admin' };
-    allProducts = []; allSales = []; allNotifs = [];
-    hide('auth-screen'); show('app');
-    bootApp();
-    connectFirestore();
-  } else {
-    for (let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.className='pdot err';}
-    document.getElementById('pin-err').style.display = 'block';
-    const box = document.querySelector('.pin-card');
-    if (box) { box.style.animation='shake .4s ease'; setTimeout(()=>box.style.animation='',500); }
-    setTimeout(() => { pinBuffer=''; updateDots(); document.getElementById('pin-err').style.display='none'; }, 1200);
-  }
-}
-
-function demoAccess() {
-  isDemoMode  = true;
-  currentUser = { uid:'demo', email:'demo@stockpilot', displayName:'Demo User' };
-  userRole    = 'admin';
-  settings    = { currency:'$', threshold:10, bizName:'Demo Store', displayName:'Demo User' };
-  allProducts = buildDemoProducts();
-  allSales    = buildDemoSales(allProducts);
-  allNotifs   = buildDemoNotifs();
-  hide('auth-screen'); show('app');
-  bootApp();
-  renderAll();
-  toast('Demo mode — data resets on refresh', 'info');
-}
-
-function buildDemoNotifs() {
-  return allProducts.filter(p=>p.quantity<=settings.threshold).slice(0,5).map((p,i)=>({
-    id:'n'+i, type:'warn', title:'Low Stock Alert',
-    text:p.name+' has only '+p.quantity+' units left.',
-    time:new Date(Date.now()-i*3600000), read:i>1
-  }));
-}
-
-function handleLogout() {
-  isDemoMode=false; currentUser=null; pinBuffer='';
-  unsubscribers.forEach(fn=>fn&&fn()); unsubscribers=[];
-  updateDots();
-  hide('app'); show('auth-screen');
-}
-
-function bootApp() {
-  const name = currentUser.displayName || 'Admin';
-  setText('user-name-display', name);
-  setText('user-avatar', name.charAt(0).toUpperCase());
-  const h=new Date().getHours();
-  const gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  setText('dash-greeting', gr+', '+name.split(' ')[0]+' \u{1F44B}');
-  setText('dash-date', new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}));
-  navigate('dashboard');
-}
-
-function connectFirestore() {
-  if (isDemoMode) return;
-  try {
-    const u1 = db.collection('products').orderBy('dateAdded','desc')
-      .onSnapshot(snap => {
-        allProducts = snap.docs.map(d=>({id:d.id,...d.data()}));
-        renderDashboard(); renderProducts();
-        populateCategoryFilter(); populateSaleProductSelect(); checkLowStock();
-      }, err=>console.warn('products:',err.code));
-
-    const u2 = db.collection('sales').orderBy('timestamp','desc')
-      .onSnapshot(snap => {
-        allSales = snap.docs.map(d=>{
-          const dt=d.data();
-          return {id:d.id,...dt,timestamp:dt.timestamp?.toDate?.()|| new Date()};
-        });
-        renderDashboard(); renderSales();
-      }, err=>console.warn('sales:',err.code));
-
-    const u3 = db.collection('notifications').orderBy('time','desc').limit(50)
-      .onSnapshot(snap => {
-        allNotifs = snap.docs.map(d=>{
-          const dt=d.data();
-          return {id:d.id,...dt,time:dt.time?.toDate?.()|| new Date()};
-        });
-        renderNotifications(); updateNotifBadge();
-      }, err=>console.warn('notifs:',err.code));
-
-    unsubscribers = [u1,u2,u3];
-  } catch(e) { console.warn('Firestore unavailable:', e.message); }
-}
-
-function subscribeToData() {
-  if (!currentUser || currentUser.uid === 'demo') return;
-
-  const u1 = db.collection('products').orderBy('dateAdded', 'desc')
-    .onSnapshot(snap => {
-      allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderDashboard(); renderProducts(); populateCategoryFilter(); populateSaleProductSelect(); checkLowStock();
-    }, handleFirestoreError);
-
-  const u2 = db.collection('sales').orderBy('timestamp', 'desc')
-    .onSnapshot(snap => {
-      allSales = snap.docs.map(d => {
-        const data = d.data();
-        return { id: d.id, ...data, timestamp: data.timestamp?.toDate?.() || new Date() };
-      });
-      renderDashboard(); renderSales(); renderReports();
-    }, handleFirestoreError);
-
-  const u3 = db.collection('notifications').orderBy('time', 'desc').limit(50)
-    .onSnapshot(snap => {
-      allNotifs = snap.docs.map(d => {
-        const data = d.data();
-        return { id: d.id, ...data, time: data.time?.toDate?.() || new Date() };
-      });
-      renderNotifications(); updateNotifBadge();
-    }, handleFirestoreError);
-
-  unsubscribers = [u1, u2, u3];
-}
-
-function unsubscribeAll() { unsubscribers.forEach(fn => fn?.()); unsubscribers = []; }
-
-function handleFirestoreError(err) {
-  console.warn('Firestore error:', err.code, err.message);
-  // Graceful fallback to demo data
-  if (!allProducts.length) {
-    allProducts = DEMO_PRODUCTS.map(p => ({...p}));
-    allSales    = DEMO_SALES.map(s => ({...s}));
-    renderDashboard(); renderProducts(); renderSales();
-    toast('Using offline data. Check Firestore rules.', 'error');
-  }
-}
-
-// ── SETTINGS ──
-function loadUserSettings() {
-  if (!currentUser || currentUser.uid === 'demo') return;
-  db.collection('users').doc(currentUser.uid).get()
-    .then(doc => {
-      if (doc.exists) {
-        const d = doc.data();
-        settings.currency    = d.currency    || '$';
-        settings.threshold   = d.threshold   || 10;
-        settings.bizName     = d.bizName     || 'My Store';
-        settings.displayName = d.displayName || '';
-        applySettings();
-      }
-    }).catch(() => {});
-}
-
-function applySettings() {
-  val2('set-biz-name',      settings.bizName);
-  val2('set-currency',      settings.currency);
-  val2('set-threshold',     settings.threshold);
-  val2('set-display-name',  settings.displayName || currentUser?.displayName || '');
-  val2('set-email',         currentUser?.email || '');
-}
-
-function saveSettings() {
-  settings.currency  = val('set-currency')  || '$';
-  settings.threshold = parseInt(val('set-threshold')) || 10;
-  settings.bizName   = val('set-biz-name')  || 'My Store';
-  if (currentUser?.uid !== 'demo') {
-    db.collection('users').doc(currentUser.uid).update({
-      currency: settings.currency, threshold: settings.threshold, bizName: settings.bizName
-    }).then(() => toast('Settings saved!', 'success')).catch(() => toast('Save failed', 'error'));
-  } else {
-    toast('Settings saved!', 'success');
-  }
-  checkLowStock();
-}
-
-function updateProfile() {
-  const name = val('set-display-name');
-  if (!name) return toast('Please enter a name', 'error');
-  if (currentUser?.uid !== 'demo') {
-    currentUser.updateProfile({ displayName: name })
-      .then(() => db.collection('users').doc(currentUser.uid).update({ displayName: name }))
-      .then(() => {
-        settings.displayName = name;
-        setText('user-name-display', name);
-        setText('user-avatar', name.charAt(0).toUpperCase());
-        toast('Profile updated!', 'success');
-      })
-      .catch(() => toast('Update failed', 'error'));
-  } else {
-    setText('user-name-display', name);
-    setText('user-avatar', name.charAt(0).toUpperCase());
-    toast('Profile updated!', 'success');
-  }
-}
-
-// ── NAVIGATION ──
-function navigate(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const el  = document.getElementById(`page-${page}`);
-  const nav = document.querySelector(`[data-page="${page}"]`);
-  if (el)  el.classList.add('active');
-  if (nav) nav.classList.add('active');
-  setText('page-title', page.charAt(0).toUpperCase() + page.slice(1));
-  if (page === 'dashboard')     renderDashboard();
-  if (page === 'products')      { renderProducts(); populateCategoryFilter(); }
-  if (page === 'sales')         renderSales();
-  if (page === 'reports')       renderReports();
-  if (page === 'notifications') renderNotifications();
-  if (page === 'settings')      applySettings();
-  closeSidebar();
-}
-
-function openSidebar() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebar-overlay').classList.add('visible');
-  document.body.style.overflow = 'hidden';
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('visible');
-  document.body.style.overflow = '';
-}
-
-// ── DASHBOARD ──
-function renderDashboard() {
-  const today      = new Date().toDateString();
-  const todaySales = allSales.filter(s => {
-    const d = s.timestamp instanceof Date ? s.timestamp : new Date(s.timestamp);
-    return d.toDateString() === today;
-  });
-  const todayRevenue  = todaySales.reduce((sum, s) => sum + (s.total || 0), 0);
-  const lowStockItems = allProducts.filter(p => p.quantity <= settings.threshold);
-
-  setText('total-products',  allProducts.length);
-  setText('today-sales',     todaySales.length);
-  setText('today-revenue',   `${settings.currency}${todayRevenue.toFixed(2)}`);
-  setText('low-stock-count', lowStockItems.length);
-
-  const lsCard = document.getElementById('stat-lowstock');
-  if (lsCard) lsCard.style.borderColor = lowStockItems.length > 0 ? 'var(--red)' : 'var(--border)';
-
-  const lsList = document.getElementById('low-stock-list');
-  lsList.innerHTML = lowStockItems.length === 0
-    ? `<div class="empty-state"><div class="empty-state-icon">✅</div>All items are well stocked!</div>`
-    : lowStockItems.slice(0, 5).map(p => `
-        <div class="alert-item">
-          <span class="alert-item-name">${esc(p.name)}</span>
-          <span class="alert-item-qty">${p.quantity} left</span>
-        </div>`).join('') + (lowStockItems.length > 5 ? `<div class="btn-link" style="text-align:center;padding:8px;cursor:pointer" onclick="navigate('products')">+${lowStockItems.length-5} more</div>` : '');
-
-  const rList = document.getElementById('recent-sales-list');
-  const recent = allSales.slice(0, 5);
-  rList.innerHTML = recent.length === 0
-    ? `<div class="empty-state"><div class="empty-state-icon">📦</div>No sales recorded yet.</div>`
-    : salesTable(recent);
-}
-
-function setDashGreeting() {
-  const h = new Date().getHours();
-  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  const name = currentUser?.displayName?.split(' ')[0] || 'there';
-  setText('dash-greeting', `${g}, ${name} 👋`);
-  setText('dash-date', new Date().toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }));
-}
-
-// ── PRODUCTS ──
-function renderProducts(list) {
-  const products = list !== undefined ? list : filterProductsList();
-  const el = document.getElementById('products-list');
-  el.innerHTML = products.length === 0
-    ? `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📦</div>No products found.</div>`
-    : products.map(p => productCard(p)).join('');
-}
-
-function productCard(p) {
-  const low = p.quantity <= settings.threshold;
-  return `
-  <div class="product-card ${low ? 'low-stock' : ''}">
-    <div class="product-card-header">
-      <span class="product-name">${esc(p.name)}</span>
-      <div class="product-actions">
-        <button class="btn-icon edit" title="Edit" onclick="openProductModal('${p.id}')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="btn-icon del" title="Delete" onclick="openConfirmModal('${p.id}')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </button>
-      </div>
-    </div>
-    <span class="product-cat">${esc(p.category)}</span>
-    <div class="product-meta">
-      <div class="product-meta-item"><span class="product-meta-label">Price</span><span class="product-meta-value price">${settings.currency}${parseFloat(p.price).toFixed(2)}</span></div>
-      <div class="product-meta-item"><span class="product-meta-label">Qty</span><span class="product-meta-value ${low?'qty-low':'qty-ok'}">${p.quantity}${low?' ⚠️':''}</span></div>
-      <div class="product-meta-item"><span class="product-meta-label">Supplier</span><span class="product-meta-value">${esc(p.supplier||'—')}</span></div>
-      <div class="product-meta-item"><span class="product-meta-label">Added</span><span class="product-meta-value small">${formatDate(p.dateAdded)}</span></div>
-    </div>
-  </div>`;
-}
-
-function filterProductsList() {
-  const q   = val('product-search').toLowerCase();
-  const cat = val('category-filter');
-  return allProducts.filter(p =>
-    (!q   || p.name.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q) || p.supplier?.toLowerCase().includes(q)) &&
-    (!cat || p.category === cat)
-  );
-}
-function filterProducts() { renderProducts(filterProductsList()); }
-
-function populateCategoryFilter() {
-  const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
-  const sel  = document.getElementById('category-filter');
-  if (!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = `<option value="">All Categories</option>` + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-  sel.value = cur;
-  const dl = document.getElementById('cat-list');
-  if (dl) dl.innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
-}
-
-function openProductModal(id) {
-  show('product-modal');
-  clearError('product-form-error');
-  if (id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-    setText('product-modal-title', 'Edit Product');
-    val2('product-edit-id', id);
-    val2('p-name',     p.name);
-    val2('p-category', p.category);
-    val2('p-supplier', p.supplier || '');
-    val2('p-price',    p.price);
-    val2('p-qty',      p.quantity);
-    setText('save-product-btn', 'Save Changes');
-  } else {
-    setText('product-modal-title', 'Add Product');
-    val2('product-edit-id', '');
-    ['p-name','p-category','p-supplier','p-price','p-qty'].forEach(f => val2(f, ''));
-    setText('save-product-btn', 'Save Product');
-  }
-}
-function closeProductModal() { hide('product-modal'); }
-
-async function saveProduct() {
-  const name     = val('p-name').trim();
-  const category = val('p-category').trim();
-  const price    = parseFloat(val('p-price'));
-  const qty      = parseInt(val('p-qty'));
-  const supplier = val('p-supplier').trim();
-  const editId   = val('product-edit-id');
-
-  if (!name)                 return showFieldError('product-form-error', 'Product name is required.');
-  if (!category)             return showFieldError('product-form-error', 'Category is required.');
-  if (isNaN(price)||price<0) return showFieldError('product-form-error', 'Enter a valid price.');
-  if (isNaN(qty)  ||qty<0)   return showFieldError('product-form-error', 'Enter a valid quantity.');
-
-  const data = { name, category, price, quantity: qty, supplier };
-  setLoading('save-product-btn', true);
-  try {
-    if (currentUser?.uid === 'demo') {
-      if (editId) {
-        const idx = allProducts.findIndex(p => p.id === editId);
-        if (idx !== -1) allProducts[idx] = { ...allProducts[idx], ...data };
-      } else {
-        allProducts.unshift({ id: 'dp_' + Date.now(), ...data, dateAdded: new Date().toISOString() });
-        addNotification('info', 'Product Added', `${name} added to inventory.`);
-      }
-      renderProducts(); renderDashboard(); populateCategoryFilter();
-    } else {
-      if (editId) {
-        await db.collection('products').doc(editId).update(data);
-      } else {
-        await db.collection('products').add({ ...data, dateAdded: new Date().toISOString() });
-        addNotification('info', 'Product Added', `${name} added to inventory.`);
-      }
-    }
-    toast(editId ? 'Product updated!' : 'Product added!', 'success');
-    closeProductModal();
-  } catch (e) {
-    showFieldError('product-form-error', 'Save failed. Check Firestore rules.');
-    console.error(e);
-  }
-  setLoading('save-product-btn', false);
-}
-
-function openConfirmModal(id) { deleteTargetId = id; show('confirm-modal'); }
-function closeConfirmModal()  { hide('confirm-modal'); deleteTargetId = null; }
-
-async function confirmDelete() {
-  if (!deleteTargetId) return;
-  try {
-    if (currentUser?.uid === 'demo') {
-      allProducts = allProducts.filter(p => p.id !== deleteTargetId);
-      renderProducts(); renderDashboard();
-    } else {
-      await db.collection('products').doc(deleteTargetId).delete();
-    }
-    toast('Product deleted.', 'success');
-  } catch { toast('Delete failed.', 'error'); }
-  closeConfirmModal();
-}
-
-// ── SALES ──
-function renderSales(list) {
-  const sales = list !== undefined ? list : filterSalesList();
-  const el = document.getElementById('sales-list');
-  el.innerHTML = sales.length === 0
-    ? `<div class="empty-state"><div class="empty-state-icon">💳</div>No sales recorded yet.</div>`
-    : salesTable(sales);
-}
-
-function salesTable(sales) {
-  return `<table>
-    <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Date</th></tr></thead>
-    <tbody>${sales.map(s => `
-      <tr>
-        <td class="td-product">${esc(s.productName)}</td>
-        <td class="td-qty">${s.quantity}</td>
-        <td class="td-price">${settings.currency}${parseFloat(s.unitPrice).toFixed(2)}</td>
-        <td class="td-total">${settings.currency}${parseFloat(s.total).toFixed(2)}</td>
-        <td class="td-date">${formatDateTime(s.timestamp)}</td>
-      </tr>`).join('')}
-    </tbody></table>`;
-}
-
-function filterSalesList() {
-  const q = val('sales-search').toLowerCase();
-  return allSales.filter(s => !q || s.productName?.toLowerCase().includes(q));
-}
-function filterSales() { renderSales(filterSalesList()); }
-
-function openSaleModal() {
-  show('sale-modal');
-  clearError('sale-form-error');
-  hide('sale-product-info');
-  val2('s-qty', '1'); val2('s-price', '');
-  setText('sale-total-display', '');
-  populateSaleProductSelect();
-}
-function closeSaleModal() { hide('sale-modal'); }
-
-function populateSaleProductSelect() {
-  const sel = document.getElementById('s-product');
-  if (!sel) return;
-  const available = allProducts.filter(p => p.quantity > 0);
-  sel.innerHTML = `<option value="">Select product…</option>` +
-    available.map(p => `<option value="${p.id}" data-price="${p.price}" data-qty="${p.quantity}">${esc(p.name)} (${p.quantity} in stock)</option>`).join('');
-}
-
-function onSaleProductChange() {
-  const sel = document.getElementById('s-product');
-  const opt = sel.options[sel.selectedIndex];
-  if (!opt.value) { hide('sale-product-info'); val2('s-price',''); setText('sale-total-display',''); return; }
-  const price = parseFloat(opt.dataset.price);
-  const qty   = parseInt(opt.dataset.qty);
-  val2('s-price', price.toFixed(2));
-  document.getElementById('s-qty').max = qty;
-  show('sale-product-info');
-  setText('sale-stock-info', `${qty} units in stock · ${settings.currency}${price.toFixed(2)} each`);
-  updateSaleTotal();
-}
-
-document.addEventListener('input', e => { if (e.target.id === 's-qty') updateSaleTotal(); });
-
-function updateSaleTotal() {
-  const qty   = parseInt(val('s-qty')) || 0;
-  const price = parseFloat(val('s-price')) || 0;
-  setText('sale-total-display', qty > 0 && price > 0 ? `Total: ${settings.currency}${(qty * price).toFixed(2)}` : '');
-}
-
-async function saveSale() {
-  const productId = val('s-product');
-  const qty       = parseInt(val('s-qty'));
-  const price     = parseFloat(val('s-price'));
-
-  if (!productId)      return showFieldError('sale-form-error', 'Please select a product.');
-  if (!qty || qty < 1) return showFieldError('sale-form-error', 'Enter a valid quantity.');
-
-  const product = allProducts.find(p => p.id === productId);
-  if (!product)            return showFieldError('sale-form-error', 'Product not found.');
-  if (qty > product.quantity) return showFieldError('sale-form-error', `Only ${product.quantity} units available.`);
-
-  const saleData = { productId, productName: product.name, quantity: qty, unitPrice: price, total: qty * price, timestamp: new Date() };
-  setLoading('save-sale-btn', true);
-  try {
-    if (currentUser?.uid === 'demo') {
-      allSales.unshift({ id: 'ds_' + Date.now(), ...saleData });
-      const idx = allProducts.findIndex(p => p.id === productId);
-      if (idx !== -1) allProducts[idx].quantity -= qty;
-      renderDashboard(); renderSales();
-      const newQty = allProducts.find(p => p.id === productId)?.quantity || 0;
-      if (newQty <= settings.threshold) addNotification('warn', 'Low Stock Alert', `${product.name} is low (${newQty} units left).`);
-    } else {
-      const batch = db.batch();
-      batch.set(db.collection('sales').doc(), { ...saleData, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-      batch.update(db.collection('products').doc(productId), { quantity: firebase.firestore.FieldValue.increment(-qty) });
-      await batch.commit();
-      const newQty = product.quantity - qty;
-      if (newQty <= settings.threshold) addNotification('warn', 'Low Stock Alert', `${product.name} is running low (${newQty} units left).`);
-    }
-    toast('Sale recorded! ✅', 'success');
-    closeSaleModal();
-  } catch (e) {
-    showFieldError('sale-form-error', 'Failed to record sale. Try again.');
-    console.error(e);
-  }
-  setLoading('save-sale-btn', false);
-}
-
-// ── REPORTS ──
-function switchReport(type, btn) {
-  currentReport = type;
-  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderReports();
-}
-
-function renderReports() {
-  const now = new Date();
-  let start;
-  if (currentReport === 'daily') {
-    start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    setText('report-period-title', "Today's Transactions");
-  } else if (currentReport === 'weekly') {
-    start = new Date(now); start.setDate(now.getDate() - now.getDay()); start.setHours(0,0,0,0);
-    setText('report-period-title', "This Week's Transactions");
-  } else {
-    start = new Date(now.getFullYear(), now.getMonth(), 1);
-    setText('report-period-title', "This Month's Transactions");
-  }
-
-  const filtered     = allSales.filter(s => { const d = s.timestamp instanceof Date ? s.timestamp : new Date(s.timestamp); return d >= start; });
-  const totalRevenue = filtered.reduce((sum, s) => sum + (s.total || 0), 0);
-  const avgOrder     = filtered.length ? totalRevenue / filtered.length : 0;
-  const topProduct   = getTopProduct(filtered);
-
-  setText('rpt-sales',   filtered.length);
-  setText('rpt-revenue', `${settings.currency}${totalRevenue.toFixed(2)}`);
-  setText('rpt-avg',     `${settings.currency}${avgOrder.toFixed(2)}`);
-  setText('rpt-top',     topProduct || '—');
-
-  const rList = document.getElementById('report-sales-list');
-  rList.innerHTML = filtered.length === 0
-    ? `<div class="empty-state"><div class="empty-state-icon">📊</div>No transactions for this period.</div>`
-    : salesTable(filtered);
-
-  drawBarChart(filtered);
-}
-
-function getTopProduct(sales) {
-  const map = {};
-  sales.forEach(s => map[s.productName] = (map[s.productName] || 0) + s.quantity);
-  let top = '', max = 0;
-  for (const k in map) if (map[k] > max) { max = map[k]; top = k; }
-  return top;
-}
-
-function drawBarChart(sales) {
-  const canvas = document.getElementById('revenue-chart');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const map = {};
-  sales.forEach(s => {
-    const d = s.timestamp instanceof Date ? s.timestamp : new Date(s.timestamp);
-    const key = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
-    map[key] = (map[key] || 0) + (s.total || 0);
-  });
-  const labels = Object.keys(map).slice(-7);
-  const data   = labels.map(l => map[l]);
-  if (!labels.length) { canvas.style.display = 'none'; return; }
-  canvas.style.display = '';
-  const w = canvas.parentElement.offsetWidth || 300;
-  canvas.width = w; canvas.height = 200;
-  ctx.clearRect(0, 0, w, 200);
-  const maxVal = Math.max(...data, 1);
-  const barW   = Math.min(60, (w - 60) / data.length - 8);
-  const gap    = (w - 60 - data.length * barW) / (data.length + 1);
-  const chartH = 150; const offsetY = 20;
-  data.forEach((v, i) => {
-    const barH = (v / maxVal) * chartH;
-    const x = 40 + gap + i * (barW + gap);
-    const y = offsetY + chartH - barH;
-    const grad = ctx.createLinearGradient(0, y, 0, y + barH);
-    grad.addColorStop(0, '#1A6BB5'); grad.addColorStop(1, '#0F4C81');
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.roundRect(x, y, barW, barH, 4); ctx.fill();
-    ctx.fillStyle = '#94A3B8'; ctx.font = '11px DM Mono,monospace'; ctx.textAlign = 'center';
-    ctx.fillText(labels[i], x + barW/2, 196);
-    if (barH > 18) {
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 10px DM Mono,monospace';
-      ctx.fillText(`${settings.currency}${v.toFixed(0)}`, x + barW/2, y + 14);
-    }
-  });
-}
-
-// ── NOTIFICATIONS ──
-function addNotification(type, title, text) {
-  const notif = { type, title, text, time: new Date(), read: false };
-  if (currentUser?.uid === 'demo') {
-    allNotifs.unshift({ id: 'dn_' + Date.now(), ...notif });
-    renderNotifications(); updateNotifBadge();
-  } else {
-    db.collection('notifications').add({ ...notif, time: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {});
-  }
-}
-
-function renderNotifications() {
-  const el = document.getElementById('notifications-list');
-  if (!allNotifs.length) { el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div>No notifications yet.</div>`; return; }
-  el.innerHTML = allNotifs.map(n => `
-    <div class="notif-item ${n.read ? 'read' : ''}" onclick="markRead('${n.id}')">
-      <div class="notif-icon ${iconClass(n.type)}">${notifEmoji(n.type)}</div>
-      <div class="notif-body">
-        <div class="notif-title">${esc(n.title)}</div>
-        <div class="notif-text">${esc(n.text)}</div>
-        <div class="notif-time">${timeAgo(n.time)}</div>
-      </div>
-      ${!n.read ? '<div class="notif-unread-dot"></div>' : ''}
-    </div>`).join('');
-}
-
-function markRead(id) {
-  const n = allNotifs.find(x => x.id === id);
-  if (!n || n.read) return;
-  n.read = true;
-  if (currentUser?.uid !== 'demo') db.collection('notifications').doc(id).update({ read: true }).catch(() => {});
-  renderNotifications(); updateNotifBadge();
-}
-
-function markAllRead() {
-  allNotifs.forEach(n => n.read = true);
-  if (currentUser?.uid !== 'demo') {
-    const batch = db.batch();
-    allNotifs.forEach(n => batch.update(db.collection('notifications').doc(n.id), { read: true }));
-    batch.commit().catch(() => {});
-  }
-  renderNotifications(); updateNotifBadge();
-  toast('All notifications marked as read.', 'success');
-}
-
-function updateNotifBadge() {
-  const count = allNotifs.filter(n => !n.read).length;
-  const badge = document.getElementById('nav-notif-count');
-  const dot   = document.getElementById('notif-dot');
-  if (badge) badge.textContent = count > 0 ? count : '';
-  if (dot)   count > 0 ? show('notif-dot') : hide('notif-dot');
-}
-
-function checkLowStock() {
-  allProducts.filter(p => p.quantity <= settings.threshold).forEach(p => {
-    const exists = allNotifs.some(n => n.title === 'Low Stock Alert' && n.text.includes(p.name));
-    if (!exists) addNotification('warn', 'Low Stock Alert', `${p.name} is running low (${p.quantity} units).`);
-  });
-}
-
-function iconClass(t) { return { warn:'warn', info:'info', success:'success' }[t] || 'info'; }
-function notifEmoji(t) { return { warn:'⚠️', info:'ℹ️', success:'✅' }[t] || '🔔'; }
-
-// ── UTILITIES ──
-function val(id)         { return document.getElementById(id)?.value || ''; }
-function val2(id, v)     { const e = document.getElementById(id); if (e) e.value = v; }
-function setText(id, t)  { const e = document.getElementById(id); if (e) e.textContent = t; }
-function show(id)        { document.getElementById(id)?.classList.remove('hidden'); }
-function hide(id)        { document.getElementById(id)?.classList.add('hidden'); }
-function esc(s)          { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function showAuthError(m){ const e=document.getElementById('auth-error'); e.textContent=m; e.classList.remove('hidden'); }
-function showRegError(m) { const e=document.getElementById('reg-error');  e.textContent=m; e.classList.remove('hidden'); }
-function showFieldError(id,m){ const e=document.getElementById(id); e.textContent=m; e.classList.remove('hidden'); }
-function clearError(id)  { const e=document.getElementById(id); if(e){ e.textContent=''; e.classList.add('hidden'); } }
-
-function setLoading(id, on) {
-  const btn = document.getElementById(id);
-  if (!btn) return;
-  if (on) { btn._html = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span>'; btn.disabled = true; }
-  else    { btn.innerHTML = btn._html || btn.innerHTML; btn.disabled = false; }
-}
-
-function toast(msg, type='') {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = `toast ${type}`; el.classList.remove('hidden');
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
-}
-
-function formatDate(d)     { if (!d) return '—'; return new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
-function formatDateTime(d) { if (!d) return '—'; return new Date(d).toLocaleString('en-US',     { month:'short', day:'numeric', hour:'numeric',  minute:'2-digit' }); }
-function timeAgo(d) {
-  if (!d) return '';
-  const diff = Date.now() - new Date(d).getTime();
-  const m = Math.floor(diff/60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m/60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.floor(h/24)}d ago`;
-}
-
-// ── RESIZE ──
-window.addEventListener('resize', () => {
-  if (document.getElementById('page-reports')?.classList.contains('active')) drawBarChart(allSales);
-});
 
 // ── KEYBOARD ──
 document.addEventListener('keydown', e => {
-  const authVisible = !document.getElementById('auth-screen').classList.contains('hidden');
-  if (authVisible) {
-    if (e.key >= '0' && e.key <= '9') { pk(e.key); return; }
-    if (e.key === 'Backspace') { pdel(); return; }
-  }
   if (e.key === 'Escape') {
-    hide('product-modal'); hide('sale-modal'); hide('confirm-modal');
-    closeSidebar();
+    hide('product-modal'); hide('sale-modal'); hide('confirm-modal'); hide('register-modal'); closeSidebar();
   }
+  if (e.key === 'Enter' && !document.getElementById('auth-screen').classList.contains('hidden')) handleLogin();
 });
 
+// ── PRE-FILL LOGIN FORM ──
+// Pre-fills your credentials so you only need to click Sign In
+window.addEventListener('DOMContentLoaded', () => {
+  val2('auth-email',    'oladejiridwanopeyemi@gmail.com');
+  val2('auth-password', 'Ocrown123@');
+});
+
+// AUTO BOOT
+function handleLogout(){location.reload();}
+function togglePw(){}
+function bootApp(){
+  const el=document.getElementById('app');
+  if(el)el.classList.remove('hidden');
+  const name=settings.displayName||'Admin';
+  const n=document.getElementById('user-name-display');if(n)n.textContent=name;
+  const av=document.getElementById('user-avatar');if(av)av.textContent=name.charAt(0);
+  const h=new Date().getHours();
+  const gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const dg=document.getElementById('dash-greeting');if(dg)dg.textContent=gr+', '+name.split(' ')[0]+' 👋';
+  const dd=document.getElementById('dash-date');if(dd)dd.textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  navigate('dashboard');
+}
+function connectFirestore(){
+  try{
+    const u1=db.collection('products').orderBy('dateAdded','desc').onSnapshot(snap=>{
+      allProducts=snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderDashboard();renderProducts();populateCategoryFilter();populateSaleProductSelect();checkLowStock();
+    },e=>console.warn('products:',e.code));
+    const u2=db.collection('sales').orderBy('timestamp','desc').onSnapshot(snap=>{
+      allSales=snap.docs.map(d=>{const dt=d.data();return{id:d.id,...dt,timestamp:dt.timestamp?.toDate?.()|| new Date()};});
+      renderDashboard();renderSales();
+    },e=>console.warn('sales:',e.code));
+    const u3=db.collection('notifications').orderBy('time','desc').limit(50).onSnapshot(snap=>{
+      allNotifs=snap.docs.map(d=>{const dt=d.data();return{id:d.id,...dt,time:dt.time?.toDate?.()|| new Date()};});
+      renderNotifications();updateNotifBadge();
+    },e=>console.warn('notifs:',e.code));
+    unsubscribers=[u1,u2,u3];
+  }catch(e){console.warn('Firestore:',e.message);}
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){['product-modal','sale-modal','confirm-modal'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});closeSidebar();}
+});
+window.addEventListener('DOMContentLoaded',()=>{bootApp();connectFirestore();});
 </script>
 </body>
 </html>
