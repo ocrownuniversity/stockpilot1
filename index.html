@@ -509,15 +509,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// ── APP STATE ──
-let currentUser    = null;
-let allProducts    = [];
-let allSales       = [];
-let allNotifs      = [];
-let settings       = { currency: '$', threshold: 10, bizName: 'My Store', displayName: '' };
-let deleteTargetId = null;
-let currentReport  = 'daily';
-let unsubscribers  = [];
+// ── APP STATE (declared in PIN section below) ──
 
 // ── DEMO DATA ──
 const DEMO_PRODUCTS = [
