@@ -347,11 +347,86 @@ tbody tr:hover{background:#FAFBFF}
 
 /* ── PRINT ── */
 @media print{#lock-screen,#app>.sidebar,.topbar,#toast-wrap{display:none!important}.main{margin:0!important}.receipt{box-shadow:none;border:none}}
+
+/* ── SUPER ADMIN PANEL ── */
+.sa-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0A0F1E 0%,#0F1F45 50%,#1E3A8A 100%);padding:20px;position:relative;overflow:hidden}
+.sa-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(139,92,246,.25) 0%,transparent 60%),radial-gradient(ellipse at 80% 70%,rgba(37,99,235,.25) 0%,transparent 60%)}
+.sa-card{background:rgba(255,255,255,.97);border-radius:24px;padding:44px 40px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.5);position:relative;z-index:1;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+.sa-badge{display:inline-block;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-size:.68rem;font-weight:800;padding:2px 10px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+/* Buyer cards in SA panel */
+.buyer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.buyer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--sh);transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.buyer-card:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.buyer-card-accent{position:absolute;top:0;left:0;right:0;height:4px}
+.buyer-card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.buyer-avatar{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:#fff;flex-shrink:0}
+.buyer-name{font-size:1rem;font-weight:800;color:var(--navy)}
+.buyer-meta{font-size:.78rem;color:var(--text3);margin-top:2px}
+.buyer-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.buyer-stat{background:var(--bg);border-radius:8px;padding:8px;text-align:center}
+.buyer-stat-val{font-size:1rem;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace}
+.buyer-stat-label{font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
+.buyer-btns{display:flex;gap:6px}
+/* SA Sidebar override */
+.sa-sidebar-banner{background:linear-gradient(135deg,#7C3AED,#2563EB);padding:10px 14px;margin:10px;border-radius:10px;font-size:.78rem;font-weight:700;color:#fff;text-align:center;letter-spacing:.3px}
+/* Role permission badges */
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.perm-item{display:flex;align-items:center;gap:6px;font-size:.78rem;padding:6px 10px;border-radius:7px;background:var(--bg)}
+.perm-item.yes{color:#059669}
+.perm-item.no{color:#9CA3AF;opacity:.7}
+/* Buyer context bar (shown in sidebar when inside a buyer) */
+.buyer-ctx{padding:8px 14px;margin:0 10px 4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:8px;display:flex;align-items:center;justify-content:space-between}
+.buyer-ctx-name{font-size:.78rem;font-weight:700;color:#D97706}
+.buyer-ctx-back{font-size:.7rem;color:#2563EB;cursor:pointer;font-weight:600}
+.buyer-ctx-back:hover{text-decoration:underline}
+/* Sync indicator */
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* Access denied page */
+.denied-page{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center}
+.denied-icon{font-size:4rem;margin-bottom:16px}
+.denied-title{font-size:1.3rem;font-weight:800;color:var(--navy);margin-bottom:8px}
+.denied-sub{font-size:.9rem;color:var(--text3);max-width:340px}
 </style>
 </head>
 <body>
 
 <!-- ═══ LOCK SCREEN ═══ -->
+<!-- ═══ SUPER ADMIN PIN SCREEN ═══ -->
+<div id="sa-pin-screen" class="sa-screen hidden">
+  <div class="sa-card">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="lock-logo-icon" style="margin:0 auto 12px;width:58px;height:58px;font-size:1.6rem">🛡️</div>
+      <div class="sa-badge">Super Admin</div>
+      <div class="lock-title" style="margin-top:8px">StockPilot Control</div>
+      <div class="lock-sub">Enter Super Admin PIN for full system access</div>
+    </div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="sa-d0"></div>
+      <div class="pin-dot" id="sa-d1"></div>
+      <div class="pin-dot" id="sa-d2"></div>
+      <div class="pin-dot" id="sa-d3"></div>
+    </div>
+    <div id="sa-pin-err" class="err-box hidden">❌ Wrong PIN. Try again.</div>
+    <div class="numpad">
+      <button class="numkey" onclick="saPk('1')">1</button>
+      <button class="numkey" onclick="saPk('2')">2</button>
+      <button class="numkey" onclick="saPk('3')">3</button>
+      <button class="numkey" onclick="saPk('4')">4</button>
+      <button class="numkey" onclick="saPk('5')">5</button>
+      <button class="numkey" onclick="saPk('6')">6</button>
+      <button class="numkey" onclick="saPk('7')">7</button>
+      <button class="numkey" onclick="saPk('8')">8</button>
+      <button class="numkey" onclick="saPk('9')">9</button>
+      <button class="numkey" style="grid-column:span 2" onclick="saPk('0')">0</button>
+      <button class="numkey" onclick="saPdel()">⌫</button>
+    </div>
+    <button class="btn-ghost-full" onclick="showScreen('lock-screen')">👤 Login as Staff/Buyer instead</button>
+    <div class="lock-footer"><span class="sync-dot"></span>Synced across all devices · Super Admin PIN: 1990</div>
+  </div>
+</div>
+
+<!-- ═══ STAFF/BUYER LOGIN SCREEN ═══ -->
 <div id="lock-screen">
   <div class="lock-card">
     <div class="lock-logo">
@@ -362,7 +437,6 @@ tbody tr:hover{background:#FAFBFF}
       <div class="lock-tab active" id="tab-login" onclick="switchTab('login')">Staff Login</div>
       <div class="lock-tab" id="tab-pin" onclick="switchTab('pin')">Admin PIN</div>
     </div>
-
     <!-- LOGIN -->
     <div id="login-form">
       <div class="lock-title">Welcome back</div>
@@ -371,13 +445,12 @@ tbody tr:hover{background:#FAFBFF}
       <div class="fgroup"><label class="flabel">Email</label><input class="finput" type="email" id="l-email" placeholder="staff@business.com"/></div>
       <div class="fgroup"><label class="flabel">Password</label><div class="pw-wrap"><input class="finput" type="password" id="l-pass" placeholder="Password"/><span class="pw-eye" onclick="togglePw('l-pass')">👁</span></div></div>
       <button class="btn-primary" onclick="doLogin()">Sign In →</button>
-      <button class="btn-ghost-full" onclick="switchTab('pin')">🔑 Use Admin PIN instead</button>
+      <button class="btn-ghost-full" onclick="switchTab('pin')">🔑 Use Buyer Admin PIN instead</button>
     </div>
-
     <!-- PIN -->
     <div id="pin-form" class="hidden">
-      <div class="lock-title">Admin Access</div>
-      <div class="lock-sub">Enter your 4-digit PIN</div>
+      <div class="lock-title">Buyer Admin PIN</div>
+      <div class="lock-sub">Enter your buyer's 4-digit PIN</div>
       <div class="pin-dots">
         <div class="pin-dot" id="d0"></div>
         <div class="pin-dot" id="d1"></div>
@@ -400,7 +473,10 @@ tbody tr:hover{background:#FAFBFF}
       </div>
       <button class="btn-ghost-full" onclick="switchTab('login')">👤 Staff login instead</button>
     </div>
-    <div class="lock-footer">Default PIN: <strong>2580</strong> · Change anytime in Settings</div>
+    <div class="lock-footer">
+      <span class="sync-dot"></span>Multi-device sync · 
+      <strong onclick="showScreen('sa-pin-screen')">Super Admin access</strong>
+    </div>
   </div>
 </div>
 
@@ -716,6 +792,174 @@ tbody tr:hover{background:#FAFBFF}
   <div class="search-box-big" onclick="event.stopPropagation()">
     <input class="search-input-big" id="global-search-input" placeholder="Search products, sales, staff…" oninput="doGlobalSearch()" autocomplete="off"/>
     <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+<!-- ═══ SUPER ADMIN PANEL ═══ -->
+<div id="sa-panel" class="hidden">
+<div style="display:flex;min-height:100vh">
+  <!-- SA Sidebar -->
+  <aside class="sidebar" id="sa-sidebar">
+    <div class="sb-head">
+      <div class="sb-brand"><div class="sb-brand-icon" style="background:linear-gradient(135deg,#7C3AED,#2563EB)">🛡️</div><div class="sb-brand-name">Stock<span>Pilot</span></div></div>
+      <button class="sb-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <div class="sa-sidebar-banner">🛡️ SUPER ADMIN MODE</div>
+    <nav class="sb-nav">
+      <div class="sb-section">Control Panel</div>
+      <a class="sb-link active" data-sa-page="sa-buyers" onclick="goSAPage('sa-buyers')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Buyers
+        <span class="sb-badge" id="sa-buyer-count"></span>
+      </a>
+      <a class="sb-link" data-sa-page="sa-overview" onclick="goSAPage('sa-overview')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        System Overview
+      </a>
+      <a class="sb-link" data-sa-page="sa-allsales" onclick="goSAPage('sa-allsales')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        All Sales
+      </a>
+      <div class="sb-section">Actions</div>
+      <a class="sb-link" onclick="openBuyerModal()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Create Buyer
+      </a>
+      <a class="sb-link" data-sa-page="sa-settings" onclick="goSAPage('sa-settings')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        SA Settings
+      </a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="sb-avatar" style="background:linear-gradient(135deg,#7C3AED,#2563EB)">👑</div>
+        <div><div class="sb-user-name">Super Admin</div><div class="sb-user-role">Full System Control</div></div>
+      </div>
+      <div class="sb-btns">
+        <button class="sb-btn" onclick="toggleDark()" id="sa-dark-btn">🌙 Dark</button>
+        <button class="sb-btn danger" onclick="doSALogout()">🚪 Logout</button>
+      </div>
+    </div>
+  </aside>
+  <div class="sb-overlay" id="sa-sb-overlay" onclick="closeSidebar()"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="topbar-menu" onclick="openSidebar('sa-sidebar','sa-sb-overlay')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title" id="sa-topbar-title">Buyers</div>
+      <div class="topbar-right">
+        <div style="font-size:.75rem;font-weight:700;padding:4px 12px;background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(37,99,235,.15));color:#7C3AED;border-radius:99px;border:1px solid rgba(124,58,237,.2)">🛡️ SUPER ADMIN</div>
+        <div class="tb-avatar" style="background:linear-gradient(135deg,#7C3AED,#2563EB)">👑</div>
+      </div>
+    </header>
+
+    <div class="pages">
+      <!-- BUYERS PAGE -->
+      <div class="page active" id="page-sa-buyers">
+        <div class="pg-head">
+          <div><h2>Buyers Management</h2><div class="pg-sub" id="sa-buyers-sub"></div></div>
+          <button class="btn btn-blue btn-sm" onclick="openBuyerModal()">+ Create Buyer</button>
+        </div>
+        <div class="buyer-grid" id="sa-buyer-grid"></div>
+      </div>
+
+      <!-- SYSTEM OVERVIEW -->
+      <div class="page" id="page-sa-overview">
+        <div class="pg-head"><div><h2>System Overview</h2><div class="pg-sub">All buyers · All inventory · All sales</div></div></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon" style="background:#EDE9FE">🏢</div><div class="stat-info"><div class="label">Total Buyers</div><div class="value" id="sa-stat-buyers">0</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#EFF6FF">📦</div><div class="stat-info"><div class="label">Total Products</div><div class="value" id="sa-stat-prods">0</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#F0FDF4">💳</div><div class="stat-info"><div class="label">Total Sales</div><div class="value" id="sa-stat-sales">0</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:#FFFBEB">💰</div><div class="stat-info"><div class="label">Total Revenue</div><div class="value" id="sa-stat-rev">$0</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>📊 Buyer Performance</h3></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Buyer</th><th>Products</th><th>Sales</th><th>Revenue</th><th>Staff</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="sa-overview-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ALL SALES -->
+      <div class="page" id="page-sa-allsales">
+        <div class="pg-head"><div><h2>All Sales — System Wide</h2></div><button class="btn btn-outline btn-sm" onclick="exportAllSalesCSV()">📤 Export All</button></div>
+        <div class="filter-bar">
+          <div class="search-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="sa-sales-search" placeholder="Search all sales…" oninput="renderSASales()"/></div>
+          <select class="fselect" id="sa-sales-buyer" onchange="renderSASales()"><option value="">All Buyers</option></select>
+        </div>
+        <div class="card"><div class="tbl-wrap"><table>
+          <thead><tr><th>#</th><th>Buyer</th><th>Product</th><th>Qty</th><th>Total</th><th>Cashier</th><th>Date</th></tr></thead>
+          <tbody id="sa-sales-tbody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- SA SETTINGS -->
+      <div class="page" id="page-sa-settings">
+        <div class="pg-head"><div><h2>Super Admin Settings</h2></div></div>
+        <div class="settings-grid">
+          <div class="card"><div class="card-head"><h3>🔐 Change Super Admin PIN</h3></div><div class="card-body">
+            <div class="fgrp"><label class="flabel">Current PIN</label><input class="form-control" type="password" id="sa-old-pin" placeholder="Current PIN" maxlength="4"/></div>
+            <div class="fgrp"><label class="flabel">New PIN (4 digits)</label><input class="form-control" type="password" id="sa-new-pin" placeholder="New 4-digit PIN" maxlength="4"/></div>
+            <div class="fgrp"><label class="flabel">Confirm New PIN</label><input class="form-control" type="password" id="sa-cf-pin" placeholder="Confirm PIN" maxlength="4"/></div>
+            <button class="btn btn-blue btn-sm" onclick="changeSAPin()">Update Super Admin PIN</button>
+          </div></div>
+          <div class="card"><div class="card-head"><h3>🗄️ System Data</h3></div><div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-outline btn-sm" onclick="exportAllSalesCSV()">💳 Export All Sales CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="saLoadDemoData()">🧪 Load Demo Buyers + Data</button>
+            <button class="btn btn-red btn-sm" onclick="if(confirm('DELETE ALL DATA? Cannot be undone!'))clearAllData()">⚠️ Clear All Data</button>
+          </div></div>
+          <div class="card"><div class="card-head"><h3>ℹ️ Role Permissions Guide</h3></div><div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="padding:10px;background:var(--bg);border-radius:8px"><div style="font-weight:800;font-size:.85rem;margin-bottom:6px">👑 Buyer Admin</div><div style="font-size:.78rem;color:var(--text3)">Full control of their buyer: products, sales, staff, settings, reports</div></div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px"><div style="font-weight:800;font-size:.85rem;margin-bottom:6px">🏗️ Manager</div><div style="font-size:.78rem;color:var(--text3)">Manage inventory: add/edit/delete products, view reports, record sales</div></div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px"><div style="font-weight:800;font-size:.85rem;margin-bottom:6px">👤 Staff / Cashier</div><div style="font-size:.78rem;color:var(--text3)">View assigned inventory, record sales only — no editing or reports</div></div>
+              <div style="padding:10px;background:var(--bg);border-radius:8px"><div style="font-weight:800;font-size:.85rem;margin-bottom:6px">📊 Accountant</div><div style="font-size:.78rem;color:var(--text3)">View inventory and generate/export all reports — no editing</div></div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- BUYER MODAL -->
+<div id="buyer-modal" class="modal-overlay hidden">
+  <div class="modal"><div class="modal-head"><h3 id="bm-title">Create Buyer</h3><button class="modal-close" onclick="closeModal('buyer-modal')">✕</button></div>
+  <div class="modal-body">
+    <div id="bm-err" class="form-err hidden"></div>
+    <input type="hidden" id="bm-id"/>
+    <div class="form-row">
+      <div class="full fgrp"><label class="flabel">Business / Buyer Name *</label><input class="form-control" id="bm-name" placeholder="e.g. City Pharmacy"/></div>
+      <div class="fgrp"><label class="flabel">Admin Email *</label><input class="form-control" type="email" id="bm-email" placeholder="admin@citypharmacy.com"/></div>
+      <div class="fgrp"><label class="flabel">Admin Password *</label><input class="form-control" type="password" id="bm-pass" placeholder="Min 6 characters"/></div>
+      <div class="fgrp"><label class="flabel">Buyer PIN (4 digits)</label><input class="form-control" type="password" id="bm-pin" placeholder="4-digit PIN" maxlength="4"/></div>
+      <div class="fgrp"><label class="flabel">Currency</label><input class="form-control" id="bm-cur" placeholder="$" maxlength="3" value="$"/></div>
+      <div class="fgrp"><label class="flabel">Industry / Type</label><select class="form-control" id="bm-type"><option value="pharmacy">💊 Pharmacy</option><option value="supermarket">🛒 Supermarket</option><option value="shop">🏪 General Shop</option><option value="restaurant">🍽️ Restaurant</option><option value="electronics">⚡ Electronics</option><option value="other">📦 Other</option></select></div>
+      <div class="full fgrp"><label class="flabel">Address / Location</label><input class="form-control" id="bm-addr" placeholder="123 Main St, City"/></div>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn btn-outline" onclick="closeModal('buyer-modal')">Cancel</button>
+    <button class="btn btn-blue" onclick="saveBuyer()">Save Buyer</button>
+  </div>
+  </div>
+</div>
+
+<!-- MANAGE BUYER MODAL (SA entering a buyer's inventory) -->
+<div id="manage-buyer-modal" class="modal-overlay hidden">
+  <div class="modal modal-sm"><div class="modal-head"><h3>Manage Buyer</h3><button class="modal-close" onclick="closeModal('manage-buyer-modal')">✕</button></div>
+  <div class="modal-body">
+    <div id="mbm-info" style="margin-bottom:16px"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-blue" onclick="enterBuyerAsAdmin()">🏢 Enter as Admin (Full Control)</button>
+      <button class="btn btn-outline" onclick="viewBuyerInventory()">📦 View Inventory Only</button>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -1504,6 +1748,590 @@ window.addEventListener('resize', adjAllGrids);
 adjAllGrids();
 
 console.log('%c StockPilot PRO ✓ Advanced features loaded ', 'background:#2563EB;color:white;padding:4px 8px;border-radius:4px;font-weight:bold');
+
+
+// ════════════════════════════════════════════════
+//  MULTI-BUYER / ROLE-BASED ACCESS SYSTEM
+// ════════════════════════════════════════════════
+
+const SA_PIN_KEY  = 'sp_sa_pin';
+const SA_PIN_DEFAULT = '1990';
+let SUPER_ADMIN_PIN = localStorage.getItem(SA_PIN_KEY) || SA_PIN_DEFAULT;
+
+// ── MULTI-TENANT DATA STRUCTURE ─────────────────
+// buyers: [{id, name, adminEmail, adminPassword, buyerPin, currency, type, address, createdAt}]
+// Each buyer has its own: sp_prods_<buyerId>, sp_sales_<buyerId>, sp_notifs_<buyerId>, sp_staff_<buyerId>, sp_cfg_<buyerId>
+
+let buyers    = JSON.parse(localStorage.getItem('sp_buyers') || '[]');
+let currentBuyerId = null;   // null = SA viewing all, or a buyerId
+let saMode    = false;       // true when logged in as super admin
+let saPinBuf  = '';
+let managingBuyer = null;    // buyer being managed/entered
+
+// ── SCREEN ROUTING ───────────────────────────────
+function showScreen(id) {
+  ['lock-screen','sa-pin-screen','app','sa-panel'].forEach(s => {
+    const el = g(s);
+    if (el) el.classList.toggle('hidden', s !== id);
+    if (el) el.style.display = s === id ? (s === 'app' || s === 'sa-panel' ? 'flex' : '') : 'none';
+  });
+  // Special: lock-screen & sa-pin-screen use flex
+  const tgt = g(id);
+  if (tgt) { tgt.classList.remove('hidden'); tgt.style.display = ''; }
+}
+
+// Bootstrap: decide which screen to show on load
+(function bootstrap() {
+  // Hide everything first
+  ['lock-screen','sa-pin-screen','app','sa-panel'].forEach(s => {
+    const el = g(s); if(el) { el.style.display = 'none'; el.classList.add('hidden'); }
+  });
+  // Always start at lock
+  const lk = g('lock-screen');
+  if (lk) { lk.style.display = ''; lk.classList.remove('hidden'); }
+})();
+
+// ── SUPER ADMIN PIN ───────────────────────────────
+function saPk(d) {
+  if (saPinBuf.length >= 4) return;
+  saPinBuf += d; saUpdateDots();
+  if (saPinBuf.length === 4) setTimeout(saCheckPin, 160);
+}
+function saPdel() { saPinBuf = saPinBuf.slice(0,-1); saUpdateDots(); g('sa-pin-err').classList.add('hidden'); }
+function saUpdateDots() {
+  for(let i=0;i<4;i++){const el=g('sa-d'+i);if(!el)return;el.classList.toggle('on',i<saPinBuf.length);el.classList.remove('err');}
+}
+function saCheckPin() {
+  if (saPinBuf === SUPER_ADMIN_PIN) {
+    saMode = true; currentBuyerId = null;
+    showScreen('sa-panel');
+    renderSAPanel();
+    applyDark();
+    toast('Welcome, Super Admin 👑', 'success');
+  } else {
+    for(let i=0;i<4;i++){const el=g('sa-d'+i);if(el){el.classList.remove('on');el.classList.add('err');}}
+    g('sa-pin-err').classList.remove('hidden');
+    setTimeout(()=>{ saPinBuf=''; saUpdateDots(); g('sa-pin-err').classList.add('hidden'); }, 1300);
+  }
+}
+function doSALogout() {
+  saMode=false; saPinBuf=''; currentBuyerId=null; managingBuyer=null;
+  showScreen('lock-screen');
+  switchTab('login');
+}
+
+// ── BUYER PIN (per-buyer admin login) ─────────────
+function checkPin() {
+  // Check against all buyers' pins
+  const buyer = buyers.find(b => b.buyerPin && b.buyerPin === pinBuf);
+  if (buyer) {
+    currentBuyerId = buyer.id;
+    me = { id:'buyer-admin-'+buyer.id, name:buyer.adminName||'Admin', role:'admin', email:buyer.adminEmail, buyerId:buyer.id };
+    loadBuyerContext(buyer.id);
+    showScreen('app');
+    enterApp();
+    toast('Welcome back, ' + buyer.name + ' 👋', 'success');
+  } else {
+    for(let i=0;i<4;i++){const el=g('d'+i);if(el){el.classList.remove('on');el.classList.add('err');}}
+    g('pin-err').classList.remove('hidden');
+    setTimeout(()=>{ pinBuf=''; updateDots(); g('pin-err').classList.add('hidden'); }, 1300);
+  }
+}
+
+// ── STAFF EMAIL LOGIN ─────────────────────────────
+// Override doLogin for multi-tenant
+function doLogin() {
+  const email = g('l-email').value.trim();
+  const pass  = g('l-pass').value;
+  if (!email||!pass) return showErr('login-err','Fill in all fields.');
+
+  // Search across all buyers' staff
+  let found = null;
+  let foundBuyerId = null;
+  for (const buyer of buyers) {
+    const bStaff = getBuyerStaff(buyer.id);
+    const match = bStaff.find(s => s.email.toLowerCase()===email.toLowerCase() && s.password===pass);
+    if (match) { found=match; foundBuyerId=buyer.id; break; }
+    // Also check buyer admin email
+    if (buyer.adminEmail.toLowerCase()===email.toLowerCase() && buyer.adminPassword===pass) {
+      found = { id:'admin-'+buyer.id, name:buyer.adminName||'Admin', role:'admin', email:buyer.adminEmail, buyerId:buyer.id };
+      foundBuyerId = buyer.id;
+      break;
+    }
+  }
+  if (!found) return showErr('login-err','Invalid email or password. Check your credentials.');
+  me = { ...found, buyerId: foundBuyerId };
+  currentBuyerId = foundBuyerId;
+  loadBuyerContext(foundBuyerId);
+  showScreen('app');
+  enterApp();
+}
+
+// ── BUYER CONTEXT ─────────────────────────────────
+function loadBuyerContext(buyerId) {
+  const buyer = buyers.find(b=>b.id===buyerId);
+  if (!buyer) return;
+  // Load buyer-specific data into global vars
+  prods  = JSON.parse(localStorage.getItem('sp_prods_'+buyerId)  || '[]');
+  sales  = JSON.parse(localStorage.getItem('sp_sales_'+buyerId)  || '[]').map(s=>({...s,timestamp:new Date(s.timestamp)}));
+  notifs = JSON.parse(localStorage.getItem('sp_notifs_'+buyerId) || '[]').map(n=>({...n,time:new Date(n.time)}));
+  staff  = getBuyerStaff(buyerId);
+  cfg    = JSON.parse(localStorage.getItem('sp_cfg_'+buyerId)    || JSON.stringify({bizName:buyer.name,currency:buyer.currency||'$',threshold:10}));
+  // Show buyer context bar in sidebar
+  updateBuyerContextBar(buyer);
+}
+
+function getBuyerStaff(buyerId) {
+  return JSON.parse(localStorage.getItem('sp_staff_'+buyerId) || '[]');
+}
+
+function updateBuyerContextBar(buyer) {
+  const bar = g('buyer-ctx-bar');
+  const nm  = g('buyer-ctx-name');
+  if (bar && buyer) { nm.textContent = buyer.name; bar.classList.remove('hidden'); }
+}
+
+function exitBuyerContext() {
+  if (saMode) {
+    // SA entered a buyer, go back to SA panel
+    currentBuyerId = null; managingBuyer = null;
+    g('buyer-ctx-bar')?.classList.add('hidden');
+    showScreen('sa-panel');
+    renderSAPanel();
+  } else {
+    doLogout();
+  }
+}
+
+// ── OVERRIDE save() FOR MULTI-TENANT ─────────────
+function save() {
+  const bid = currentBuyerId;
+  if (!bid) return; // SA global view, don't save to buyer
+  localStorage.setItem('sp_prods_'+bid,  JSON.stringify(prods));
+  localStorage.setItem('sp_sales_'+bid,  JSON.stringify(sales));
+  localStorage.setItem('sp_notifs_'+bid, JSON.stringify(notifs));
+  localStorage.setItem('sp_staff_'+bid,  JSON.stringify(staff));
+  localStorage.setItem('sp_cfg_'+bid,    JSON.stringify(cfg));
+  // Trigger cross-device sync signal
+  localStorage.setItem('sp_sync_'+bid, Date.now().toString());
+}
+
+// ── OVERRIDE doLogout() FOR MULTI-TENANT ─────────
+function doLogout() {
+  me=null; pinBuf=''; updateDots(); currentBuyerId=null;
+  prods=[]; sales=[]; notifs=[]; staff=[];
+  g('buyer-ctx-bar')?.classList.add('hidden');
+  g('app')?.classList.add('hidden');
+  g('app') && (g('app').style.display='none');
+  showScreen('lock-screen');
+  g('l-email').value=''; g('l-pass').value='';
+  g('login-err').classList.add('hidden');
+  switchTab('login');
+}
+
+// ── ROLE PERMISSIONS ─────────────────────────────
+const PERMS = {
+  admin:      { canEditProducts:true,  canDeleteProducts:true,  canRecordSales:true,  canViewReports:true,  canManageStaff:true,  canEditSettings:true  },
+  manager:    { canEditProducts:true,  canDeleteProducts:true,  canRecordSales:true,  canViewReports:true,  canManageStaff:false, canEditSettings:false },
+  cashier:    { canEditProducts:false, canDeleteProducts:false, canRecordSales:true,  canViewReports:false, canManageStaff:false, canEditSettings:false },
+  staff:      { canEditProducts:false, canDeleteProducts:false, canRecordSales:true,  canViewReports:false, canManageStaff:false, canEditSettings:false },
+  accountant: { canEditProducts:false, canDeleteProducts:false, canRecordSales:false, canViewReports:true,  canManageStaff:false, canEditSettings:false },
+};
+
+function can(perm) {
+  if (saMode && !currentBuyerId) return true; // SA with no buyer context = superpower
+  const role = me?.role || 'staff';
+  return PERMS[role]?.[perm] || false;
+}
+
+function requirePerm(perm, action) {
+  if (!can(perm)) {
+    toast('⛔ Access denied: your role (' + (me?.role||'staff') + ') cannot ' + action, 'error');
+    return false;
+  }
+  return true;
+}
+
+// ── OVERRIDE UI BASED ON ROLE ─────────────────────
+function applyRoleUI() {
+  // Hide/show nav items based on role
+  const role = me?.role || 'staff';
+  // Staff page: only admin/manager can manage staff
+  const staffNav = document.querySelector('[data-page="staff"]');
+  if (staffNav) staffNav.style.display = can('canManageStaff') ? '' : 'none';
+  // Settings: only admin
+  const settingsNav = document.querySelector('[data-page="settings"]');
+  if (settingsNav) settingsNav.style.display = can('canEditSettings') ? '' : 'none';
+  // Reports: admin, manager, accountant
+  const reportsNav = document.querySelector('[data-page="reports"]');
+  if (reportsNav) reportsNav.style.display = can('canViewReports') ? '' : 'none';
+  // Add product btn
+  const addProdBtn = document.querySelector('[onclick="openProductModal()"]');
+  if (addProdBtn) addProdBtn.style.display = can('canEditProducts') ? '' : 'none';
+  // Quick sale & record sale
+  const saleBtn = document.querySelector('[onclick="openSaleModal()"]');
+  if (saleBtn) saleBtn.style.display = can('canRecordSales') ? '' : 'none';
+  const qsBtn = document.querySelector('[onclick="openQuickSale()"]');
+  if (qsBtn) qsBtn.style.display = can('canRecordSales') ? '' : 'none';
+}
+
+// ── OVERRIDE enterApp FOR ROLE UI ─────────────────
+const _origEnterApp = enterApp;
+enterApp = function() {
+  _origEnterApp();
+  applyRoleUI();
+  // Update role display
+  if (g('s-role')) g('s-role').value = me?.role || 'staff';
+  // Show buyer context bar
+  if (currentBuyerId) {
+    const buyer = buyers.find(b=>b.id===currentBuyerId);
+    if (buyer) updateBuyerContextBar(buyer);
+  }
+};
+
+// ── OVERRIDE openProductModal FOR PERMISSIONS ──────
+const _origOpenPM = openProductModal;
+openProductModal = function(id) {
+  if (!requirePerm('canEditProducts', 'edit products')) return;
+  _origOpenPM(id);
+};
+
+// ── OVERRIDE saveProduct FOR PERMISSIONS ─────────
+const _origSaveProduct = saveProduct;
+saveProduct = function() {
+  if (!requirePerm('canEditProducts', 'save products')) return;
+  _origSaveProduct();
+};
+
+// ── OVERRIDE confirmDelete FOR PERMISSIONS ────────
+const _origConfirmDelete = confirmDelete;
+confirmDelete = function() {
+  if (!requirePerm('canDeleteProducts', 'delete products')) return;
+  _origConfirmDelete();
+};
+
+// ── OVERRIDE saveSale FOR PERMISSIONS ─────────────
+const _origSaveSale = saveSale;
+saveSale = function() {
+  if (!requirePerm('canRecordSales', 'record sales')) return;
+  _origSaveSale();
+};
+
+// ── OVERRIDE openStaffModal FOR PERMISSIONS ────────
+const _origOpenStaffModal = openStaffModal;
+openStaffModal = function(id) {
+  if (!requirePerm('canManageStaff', 'manage staff')) return;
+  _origOpenStaffModal(id);
+};
+
+// ── DENY ACCESS FOR RESTRICTED PAGES ─────────────
+const _origGoPage = goPage;
+goPage = function(pg) {
+  if (pg === 'reports' && !can('canViewReports')) {
+    toast('⛔ Reports are not available for your role', 'error'); return;
+  }
+  if (pg === 'staff' && !can('canManageStaff')) {
+    toast('⛔ Staff management requires Admin or Manager role', 'error'); return;
+  }
+  if (pg === 'settings' && !can('canEditSettings')) {
+    toast('⛔ Settings require Admin role', 'error'); return;
+  }
+  _origGoPage(pg);
+};
+
+// ── SUPER ADMIN PANEL RENDERING ───────────────────
+function renderSAPanel() {
+  g('sa-buyer-count').textContent = buyers.length || '';
+  renderSABuyers();
+  renderSAOverview();
+  renderSASales();
+  // Populate buyer filter
+  const sel = g('sa-sales-buyer');
+  if (sel) sel.innerHTML = '<option value="">All Buyers</option>' + buyers.map(b=>`<option value="${b.id}">${esc(b.name)}</option>`).join('');
+}
+
+function goSAPage(pg) {
+  document.querySelectorAll('#sa-panel .page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#sa-sidebar .sb-link').forEach(l=>l.classList.remove('active'));
+  const p = g('page-'+pg); if(p) p.classList.add('active');
+  const l = document.querySelector('[data-sa-page="'+pg+'"]'); if(l) l.classList.add('active');
+  g('sa-topbar-title').textContent = pg.replace('sa-','').replace('-',' ').replace(/\w/g,c=>c.toUpperCase());
+  if (pg==='sa-overview') renderSAOverview();
+  if (pg==='sa-allsales') renderSASales();
+  closeSidebar();
+}
+
+const BUYER_COLORS = ['#2563EB','#7C3AED','#059669','#DC2626','#D97706','#0891B2','#EC4899','#64748B'];
+const BUYER_ICONS  = {pharmacy:'💊',supermarket:'🛒',shop:'🏪',restaurant:'🍽️',electronics:'⚡',other:'📦'};
+
+function renderSABuyers() {
+  const el = g('sa-buyer-grid');
+  g('sa-buyers-sub').textContent = buyers.length + ' registered buyer' + (buyers.length!==1?'s':'');
+  if (!buyers.length) {
+    el.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏢</div><div class="empty-title">No buyers yet</div><div class="empty-sub">Create your first buyer to get started</div></div>';
+    return;
+  }
+  el.innerHTML = buyers.map((b,i) => {
+    const bProds  = JSON.parse(localStorage.getItem('sp_prods_'+b.id)  || '[]').length;
+    const bSalesA = JSON.parse(localStorage.getItem('sp_sales_'+b.id)  || '[]');
+    const bRev    = bSalesA.reduce((a,s)=>a+(s.total||0),0);
+    const bStaff  = getBuyerStaff(b.id).length;
+    const col     = BUYER_COLORS[i % BUYER_COLORS.length];
+    const icon    = BUYER_ICONS[b.type] || '📦';
+    return `<div class="buyer-card">
+      <div class="buyer-card-accent" style="background:${col}"></div>
+      <div class="buyer-card-top">
+        <div class="buyer-avatar" style="background:${col}">${icon}</div>
+        <div style="flex:1">
+          <div class="buyer-name">${esc(b.name)}</div>
+          <div class="buyer-meta">${esc(b.adminEmail)}</div>
+          <div class="buyer-meta">${esc(b.address||'No address')}</div>
+        </div>
+        <span class="badge badge-green" style="flex-shrink:0">Active</span>
+      </div>
+      <div class="buyer-stats">
+        <div class="buyer-stat"><div class="buyer-stat-val">${bProds}</div><div class="buyer-stat-label">Products</div></div>
+        <div class="buyer-stat"><div class="buyer-stat-val">${bSalesA.length}</div><div class="buyer-stat-label">Sales</div></div>
+        <div class="buyer-stat"><div class="buyer-stat-val">${bStaff}</div><div class="buyer-stat-label">Staff</div></div>
+      </div>
+      <div style="font-size:.78rem;color:var(--text3);margin-bottom:10px">Revenue: <strong style="color:#059669;font-family:'JetBrains Mono',monospace">${(b.currency||'$')+bRev.toFixed(2)}</strong> · PIN: <strong style="font-family:'JetBrains Mono',monospace">${b.buyerPin||'—'}</strong></div>
+      <div class="buyer-btns">
+        <button class="btn btn-blue btn-sm" style="flex:1" onclick="enterBuyerFromSA('${b.id}')">🏢 Enter</button>
+        <button class="btn btn-outline btn-sm" onclick="openBuyerModal('${b.id}')">✏️ Edit</button>
+        <button class="btn btn-red btn-sm" onclick="deleteBuyer('${b.id}','${esc(b.name)}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSAOverview() {
+  const totalProds  = buyers.reduce((a,b) => a + JSON.parse(localStorage.getItem('sp_prods_'+b.id)||'[]').length, 0);
+  const allSalesAll = buyers.flatMap(b => JSON.parse(localStorage.getItem('sp_sales_'+b.id)||'[]'));
+  const totalRev    = allSalesAll.reduce((a,s) => a+(s.total||0), 0);
+  g('sa-stat-buyers').textContent = buyers.length;
+  g('sa-stat-prods').textContent  = totalProds;
+  g('sa-stat-sales').textContent  = allSalesAll.length;
+  g('sa-stat-rev').textContent    = '$' + totalRev.toFixed(2);
+
+  const tb = g('sa-overview-tbody');
+  tb.innerHTML = buyers.map((b,i) => {
+    const bProds  = JSON.parse(localStorage.getItem('sp_prods_'+b.id)||'[]').length;
+    const bSalesA = JSON.parse(localStorage.getItem('sp_sales_'+b.id)||'[]');
+    const bRev    = bSalesA.reduce((a,s)=>a+(s.total||0),0);
+    const bStaff  = getBuyerStaff(b.id).length;
+    const col     = BUYER_COLORS[i%BUYER_COLORS.length];
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div><span class="td-name">${esc(b.name)}</span></div></td>
+      <td class="td-mono">${bProds}</td>
+      <td class="td-mono">${bSalesA.length}</td>
+      <td class="td-mono td-green">${(b.currency||'$')+bRev.toFixed(2)}</td>
+      <td class="td-mono">${bStaff}</td>
+      <td><span class="badge badge-green">Active</span></td>
+      <td><button class="btn btn-blue btn-sm" onclick="enterBuyerFromSA('${b.id}')">Enter →</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7"><div class="empty"><div class="empty-sub">No buyers yet</div></div></td></tr>';
+}
+
+function renderSASales() {
+  const q   = (g('sa-sales-search')?.value||'').toLowerCase();
+  const bid = g('sa-sales-buyer')?.value||'';
+  const all = buyers.flatMap(b => {
+    if (bid && b.id !== bid) return [];
+    return JSON.parse(localStorage.getItem('sp_sales_'+b.id)||'[]').map(s=>({...s,buyerName:b.name,timestamp:new Date(s.timestamp)}));
+  }).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).filter(s=>!q||s.productName?.toLowerCase().includes(q)||(s.buyerName||'').toLowerCase().includes(q));
+
+  const tb = g('sa-sales-tbody');
+  tb.innerHTML = all.length ? all.map((s,i)=>`<tr>
+    <td style="color:#9CA3AF;font-size:.78rem">${all.length-i}</td>
+    <td><span class="badge badge-blue">${esc(s.buyerName)}</span></td>
+    <td class="td-name">${esc(s.productName)}</td>
+    <td class="td-mono">${s.quantity}</td>
+    <td class="td-mono td-green">$${parseFloat(s.total||0).toFixed(2)}</td>
+    <td style="font-size:.82rem">${esc(s.cashier||'—')}</td>
+    <td style="color:#9CA3AF;font-size:.78rem">${new Date(s.timestamp).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</td>
+  </tr>`).join('')
+  : '<tr><td colspan="7"><div class="empty"><div class="empty-sub">No sales data</div></div></td></tr>';
+}
+
+// ── BUYER CRUD ────────────────────────────────────
+function openBuyerModal(id) {
+  g('bm-err').classList.add('hidden');
+  if (id) {
+    const b = buyers.find(x=>x.id===id); if(!b) return;
+    g('bm-title').textContent='Edit Buyer';
+    g('bm-id').value=id; g('bm-name').value=b.name; g('bm-email').value=b.adminEmail;
+    g('bm-pass').value=''; g('bm-pin').value=b.buyerPin||''; g('bm-cur').value=b.currency||'$';
+    g('bm-type').value=b.type||'shop'; g('bm-addr').value=b.address||'';
+  } else {
+    g('bm-title').textContent='Create Buyer';
+    g('bm-id').value=''; ['bm-name','bm-email','bm-pass','bm-pin','bm-addr'].forEach(f=>g(f).value='');
+    g('bm-cur').value='$'; g('bm-type').value='shop';
+  }
+  showModal('buyer-modal');
+}
+
+function saveBuyer() {
+  const name  = g('bm-name').value.trim();
+  const email = g('bm-email').value.trim();
+  const pass  = g('bm-pass').value;
+  const pin   = g('bm-pin').value.trim();
+  const cur   = g('bm-cur').value.trim() || '$';
+  const type  = g('bm-type').value;
+  const addr  = g('bm-addr').value.trim();
+  const eid   = g('bm-id').value;
+  if (!name || !email) return showFErr('bm-err','Name and admin email are required.');
+  if (!eid && !pass)   return showFErr('bm-err','Admin password required for new buyer.');
+  if (pass && pass.length < 6) return showFErr('bm-err','Password must be 6+ characters.');
+  if (pin && !/^\d{4}$/.test(pin)) return showFErr('bm-err','PIN must be exactly 4 digits.');
+  // Check PIN uniqueness
+  if (pin && buyers.some(b => b.buyerPin === pin && b.id !== eid)) return showFErr('bm-err','That PIN is already used by another buyer.');
+  if (eid) {
+    const idx = buyers.findIndex(b=>b.id===eid);
+    if (idx !== -1) buyers[idx] = { ...buyers[idx], name, adminEmail:email, adminPassword:pass||buyers[idx].adminPassword, buyerPin:pin||buyers[idx].buyerPin, currency:cur, type, address:addr };
+  } else {
+    const newId = 'b' + Date.now();
+    buyers.push({ id:newId, name, adminEmail:email, adminPassword:pass, adminName:'Admin', buyerPin:pin||'', currency:cur, type, address:addr, createdAt:new Date().toISOString() });
+    // Init empty config for new buyer
+    localStorage.setItem('sp_cfg_'+newId, JSON.stringify({bizName:name,currency:cur,threshold:10}));
+  }
+  localStorage.setItem('sp_buyers', JSON.stringify(buyers));
+  renderSABuyers(); renderSAOverview();
+  closeModal('buyer-modal');
+  toast(eid ? 'Buyer updated!' : 'Buyer created! 🎉', 'success');
+}
+
+function deleteBuyer(id, name) {
+  if (!confirm('Delete buyer "' + name + '"? This will DELETE all their inventory, sales and staff data. This CANNOT be undone!')) return;
+  buyers = buyers.filter(b=>b.id!==id);
+  localStorage.setItem('sp_buyers', JSON.stringify(buyers));
+  // Clean up buyer data
+  ['prods','sales','notifs','staff','cfg'].forEach(k => localStorage.removeItem('sp_'+k+'_'+id));
+  renderSABuyers(); renderSAOverview();
+  toast('Buyer deleted', 'success');
+}
+
+// ── SA ENTERS A BUYER ─────────────────────────────
+function enterBuyerFromSA(buyerId) {
+  const buyer = buyers.find(b=>b.id===buyerId); if (!buyer) return;
+  managingBuyer = buyer;
+  currentBuyerId = buyerId;
+  me = { id:'sa-in-buyer', name:'Super Admin', role:'admin', email:'superadmin', buyerId };
+  loadBuyerContext(buyerId);
+  showScreen('app');
+  enterApp();
+  toast('Entered ' + buyer.name + ' as Super Admin', 'info');
+}
+
+function enterBuyerAsAdmin() { closeModal('manage-buyer-modal'); if (managingBuyer) enterBuyerFromSA(managingBuyer.id); }
+function viewBuyerInventory() { closeModal('manage-buyer-modal'); if (managingBuyer) enterBuyerFromSA(managingBuyer.id); }
+
+// ── SA SETTINGS ───────────────────────────────────
+function changeSAPin() {
+  const old = g('sa-old-pin').value, nw = g('sa-new-pin').value, cf = g('sa-cf-pin').value;
+  if (old !== SUPER_ADMIN_PIN) return toast('Current Super Admin PIN is incorrect', 'error');
+  if (!/^\d{4}$/.test(nw)) return toast('PIN must be exactly 4 digits', 'error');
+  if (nw !== cf) return toast('PINs do not match', 'error');
+  SUPER_ADMIN_PIN = nw; localStorage.setItem(SA_PIN_KEY, nw);
+  g('sa-old-pin').value=''; g('sa-new-pin').value=''; g('sa-cf-pin').value='';
+  toast('Super Admin PIN updated!', 'success');
+}
+
+function exportAllSalesCSV() {
+  const rows = [['Buyer','Product','Category','Qty','Unit Price','Total','Cashier','Customer','Date']];
+  buyers.forEach(b => {
+    JSON.parse(localStorage.getItem('sp_sales_'+b.id)||'[]').forEach(s => {
+      rows.push([b.name,s.productName,s.category||'',s.quantity,s.unitPrice,s.total,s.cashier||'',s.customer||'',new Date(s.timestamp).toLocaleString()]);
+    });
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('
+');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='all_sales_export.csv';a.click();
+  toast('All sales exported!','success');
+}
+
+function clearAllData() {
+  buyers.forEach(b => { ['prods','sales','notifs','staff','cfg'].forEach(k=>localStorage.removeItem('sp_'+k+'_'+b.id)); });
+  buyers = []; localStorage.setItem('sp_buyers', '[]');
+  renderSABuyers(); renderSAOverview();
+  toast('All data cleared', 'warning');
+}
+
+// ── SA DEMO DATA ──────────────────────────────────
+function saLoadDemoData() {
+  if (!confirm('Create 3 demo buyers with sample data?')) return;
+  const demoBuyers = [
+    { name:'City Pharmacy', email:'admin@citypharmacy.com', pass:'admin123', pin:'1111', cur:'$', type:'pharmacy', addr:'12 Health St, Lagos' },
+    { name:'SuperMart Express', email:'admin@supermart.com', pass:'admin123', pin:'2222', cur:'$', type:'supermarket', addr:'45 Market Ave, Abuja' },
+    { name:'TechZone Electronics', email:'admin@techzone.com', pass:'admin123', pin:'3333', cur:'$', type:'electronics', addr:'7 Tech Park, Port Harcourt' },
+  ];
+  const PROD_SETS = {
+    pharmacy:['Paracetamol 500mg','Ibuprofen 400mg','Vitamin C 1000mg','Amoxicillin 250mg','Aspirin 300mg','Hand Sanitizer','Face Masks 50pk','Cough Syrup 200ml'],
+    supermarket:['Whole Milk 1L','Brown Bread','Coca-Cola 2L','Orange Juice 1L','Rice 5kg','Cooking Oil 1L','Eggs 12pk','Sugar 2kg'],
+    electronics:['USB-C Cable','Power Bank 20000mAh','Wireless Earbuds','Phone Case','Screen Protector','HDMI Cable','Bluetooth Speaker','Laptop Bag'],
+  };
+  demoBuyers.forEach((db, bi) => {
+    const newId = 'bdemo' + bi;
+    buyers.push({ id:newId, name:db.name, adminEmail:db.email, adminPassword:db.pass, adminName:'Admin', buyerPin:db.pin, currency:db.cur, type:db.type, address:db.addr, createdAt:new Date().toISOString() });
+    const pList = PROD_SETS[db.type] || PROD_SETS.supermarket;
+    const bProds = pList.map((name,i) => ({ id:'p'+newId+i, name, category:db.type==='pharmacy'?'Medicine':db.type==='electronics'?'Electronics':'Groceries', price:parseFloat((2+Math.random()*20).toFixed(2)), costPrice:parseFloat((1+Math.random()*8).toFixed(2)), quantity:Math.floor(5+Math.random()*100), sku:db.type.slice(0,3).toUpperCase()+'-00'+(i+1), supplier:'Supplier '+String.fromCharCode(65+i), lowAt:10, dateAdded:new Date().toISOString() }));
+    const bSales = [];
+    for(let i=0;i<15;i++){const p=bProds[i%bProds.length];const ts=new Date();ts.setDate(ts.getDate()-Math.floor(Math.random()*7));ts.setHours(8+Math.floor(Math.random()*10));const q=Math.floor(1+Math.random()*4);bSales.push({id:'sl'+newId+i,productId:p.id,productName:p.name,category:p.category,quantity:q,unitPrice:p.price,total:q*p.price,cashier:'Admin',customer:'',timestamp:ts});}
+    localStorage.setItem('sp_prods_'+newId,  JSON.stringify(bProds));
+    localStorage.setItem('sp_sales_'+newId,  JSON.stringify(bSales));
+    localStorage.setItem('sp_notifs_'+newId, JSON.stringify([]));
+    localStorage.setItem('sp_staff_'+newId,  JSON.stringify([]));
+    localStorage.setItem('sp_cfg_'+newId,    JSON.stringify({bizName:db.name,currency:db.cur,threshold:10}));
+  });
+  localStorage.setItem('sp_buyers', JSON.stringify(buyers));
+  renderSAPanel();
+  toast('3 demo buyers created with products & sales! ✅', 'success');
+}
+
+// ── CROSS-DEVICE SYNC (localStorage events) ────────
+window.addEventListener('storage', e => {
+  if (!e.key) return;
+  if (e.key.startsWith('sp_sync_') && currentBuyerId) {
+    const bid = e.key.replace('sp_sync_','');
+    if (bid === currentBuyerId) {
+      loadBuyerContext(currentBuyerId);
+      renderAll();
+      toast('🔄 Data synced from another device', 'info');
+    }
+  }
+  if (e.key === 'sp_buyers') {
+    buyers = JSON.parse(e.newValue || '[]');
+    if (saMode) renderSAPanel();
+  }
+});
+
+// ── SIDEBAR HELPER FOR SA ─────────────────────────
+function openSidebar(sbId, ovlId) {
+  const sb  = g(sbId  || 'sidebar');
+  const ovl = g(ovlId || 'sb-overlay');
+  if (sb)  sb.classList.add('open');
+  if (ovl) ovl.classList.add('visible');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar() {
+  ['sidebar','sa-sidebar'].forEach(id=>g(id)?.classList.remove('open'));
+  ['sb-overlay','sa-sb-overlay'].forEach(id=>g(id)?.classList.remove('visible'));
+  document.body.style.overflow='';
+}
+
+// ── KEYBOARD: SA PIN SCREEN ───────────────────────
+const _origKeydown = document.onkeydown;
+document.addEventListener('keydown', e => {
+  const saActive = !g('sa-pin-screen')?.classList.contains('hidden') && g('sa-pin-screen')?.style.display !== 'none';
+  if (saActive) {
+    if (e.key >= '0' && e.key <= '9') saPk(e.key);
+    if (e.key === 'Backspace') saPdel();
+  }
+});
+
+// ── OVERRIDE openSidebar IN MAIN APP ─────────────
+// The main topbar menu button already calls openSidebar() so that's fine
+
+console.log('%c StockPilot Multi-Buyer System ✓ ', 'background:linear-gradient(135deg,#7C3AED,#2563EB);color:white;padding:4px 10px;border-radius:4px;font-weight:bold');
 
 </script>
 </body>
