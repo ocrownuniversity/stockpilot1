@@ -420,7 +420,7 @@ tbody tr:hover{background:var(--bg)}
     <div class="sb-sec" id="admin-section">Admin</div>
     <a class="sb-lk" data-pg="staff" id="nav-staff" onclick="nav('staff')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Staff</a>
     <!-- SA only: Buyers nav -->
-    <a class="sb-lk h" data-pg="buyers" id="nav-buyers" onclick="nav('buyers')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Buyers</a>
+    <a class="sb-lk" data-pg="buyers" id="nav-buyers" onclick="nav('buyers')" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Buyers</a>
     <a class="sb-lk" data-pg="settings" id="nav-settings" onclick="nav('settings')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
   </nav>
   <div class="sb-foot">
@@ -894,19 +894,21 @@ function setupApp(){
   if(SA_MODE && !BID){ g('sa-pin-card')?.classList.remove('h'); g('pin-change-card')?.classList.add('h'); }
   // Subscribe to Firestore
   subscribeData();
-  nav('dashboard');
+  if(SA_MODE && !BID){ nav('buyers'); } else { nav('dashboard'); }
 }
 
 function applyRoleNav(){
-  g('nav-reports')?.style.setProperty('display', can('rpt')?'':'none');
-  g('nav-staff')?.style.setProperty('display', can('staff')?'':'none');
-  g('admin-section')?.style.setProperty('display', can('staff')?'':'none');
-  g('nav-buyers')?.style.setProperty('display', SA_MODE&&!BID?'flex':'none');
-  g('nav-settings')?.style.setProperty('display', SA_MODE||can('cfg')?'flex':'none');
-  g('btn-add-prod')?.style.setProperty('display', can('prod')?'':'none');
-  g('btn-new-sale')?.style.setProperty('display', can('sale')?'':'none');
-  g('btn-rec-sale')?.style.setProperty('display', can('sale')?'':'none');
-  g('btn-add-staff')?.style.setProperty('display', can('staff')?'':'none');
+  const sd = (id, show) => { const e=g(id); if(e) e.style.display=show?'flex':'none'; };
+  const sb = (id, show) => { const e=g(id); if(e) e.style.display=show?'block':'none'; };
+  sd('nav-reports',    SA_MODE || can('rpt'));
+  sd('nav-staff',      SA_MODE || can('staff'));
+  sd('admin-section',  SA_MODE || can('staff'));
+  sd('nav-buyers',     SA_MODE && !BID);
+  sd('nav-settings',   true);
+  sb('btn-add-prod',   SA_MODE || can('prod'));
+  sb('btn-new-sale',   SA_MODE || can('sale'));
+  sb('btn-rec-sale',   SA_MODE || can('sale'));
+  sb('btn-add-staff',  SA_MODE || can('staff'));
 }
 
 // ── FIRESTORE SUBSCRIPTIONS ────────────────────────
@@ -1082,7 +1084,7 @@ function openProdModal(id){
 
 async function saveProd(){
   if(!can('prod')){toast('⛔ No permission','e');return;}
-  if(!BID){toast('No buyer context — enter a buyer first','e');return;}
+  const effectiveProdBID = BID || ME?.buyerId; if(!effectiveProdBID){toast('Enter a buyer first from the Buyers page','e');return;}
   const name=g('pm-name').value.trim(), cat=g('pm-cat').value.trim();
   const price=parseFloat(g('pm-price').value), qty=parseInt(g('pm-qty').value);
   const eid=g('pm-id').value;
@@ -1090,9 +1092,9 @@ async function saveProd(){
   if(!cat)  return ferr('pm-err','Category required.');
   if(isNaN(price)||price<0) return ferr('pm-err','Enter valid price.');
   if(isNaN(qty)||qty<0)     return ferr('pm-err','Enter valid quantity.');
-  const data={name,category:cat,price,quantity:qty,sku:g('pm-sku').value.trim(),costPrice:parseFloat(g('pm-cost').value)||0,lowAt:parseInt(g('pm-low').value)||CFG.threshold,supplier:g('pm-sup').value.trim(),buyerId:BID};
+  const data={name,category:cat,price,quantity:qty,sku:g('pm-sku').value.trim(),costPrice:parseFloat(g('pm-cost').value)||0,lowAt:parseInt(g('pm-low').value)||CFG.threshold,supplier:g('pm-sup').value.trim(),buyerId:effectiveProdBID};
   try{
-    const col=db.collection('buyers').doc(BID).collection('products');
+    const col=db.collection('buyers').doc(effectiveProdBID).collection('products');
     if(eid){ await col.doc(eid).update(data); }
     else{ await col.add({...data, dateAdded:firebase.firestore.FieldValue.serverTimestamp()}); addNotif('info','Product Added',name+' added to inventory.'); }
     closeM('prod-modal'); toast(eid?'Product updated!':'Product added!','s'); checkLowStock();
@@ -1103,7 +1105,8 @@ async function saveProd(){
 function openDelModal(id,name){ if(!can('del')){toast('⛔ No permission','e');return;} DEL_TGT=id; g('del-name').textContent=name; openM('del-modal'); }
 async function confirmDel(){
   if(!DEL_TGT||!BID)return;
-  try{ await db.collection('buyers').doc(BID).collection('products').doc(DEL_TGT).delete(); closeM('del-modal'); DEL_TGT=null; toast('Product deleted','s'); }
+  const delBID = BID || ME?.buyerId; if(!delBID)return;
+  try{ await db.collection('buyers').doc(delBID).collection('products').doc(DEL_TGT).delete(); closeM('del-modal'); DEL_TGT=null; toast('Product deleted','s'); }
   catch(e){ toast('Delete failed: '+e.message,'e'); }
 }
 
@@ -1111,14 +1114,14 @@ async function confirmDel(){
 function openStockModal(pid){ if(!can('prod')){toast('⛔ No permission','e');return;} const p=PRODS.find(x=>x.id===pid); if(!p)return; g('sa-info').textContent=p.name+' — current: '+p.quantity+' units'; g('sa-pid').value=pid; g('sa-qty').value=''; g('sa-reason').value=''; g('sa-type').value='add'; openM('stock-modal'); }
 async function saveStockAdj(){
   const pid=g('sa-pid').value, type=g('sa-type').value, qty=parseInt(g('sa-qty').value), reason=g('sa-reason').value.trim();
-  if(!pid||!BID)return;
+  const adjBID = BID || ME?.buyerId; if(!pid||!adjBID)return;
   if(isNaN(qty)||qty<0){toast('Enter valid quantity','e');return;}
   const p=PRODS.find(x=>x.id===pid); if(!p)return;
   let newQty=p.quantity;
   if(type==='add') newQty+=qty;
   else if(type==='remove'){if(qty>p.quantity){toast('Cannot remove more than stock','e');return;} newQty-=qty;}
   else newQty=qty;
-  try{ await db.collection('buyers').doc(BID).collection('products').doc(pid).update({quantity:newQty}); addNotif('info','Stock Adjusted',p.name+': '+p.quantity+' → '+newQty+' units. '+(reason||'')); closeM('stock-modal'); toast('Stock updated → '+newQty+' units','s'); }
+  try{ await db.collection('buyers').doc(adjBID).collection('products').doc(pid).update({quantity:newQty}); addNotif('info','Stock Adjusted',p.name+': '+p.quantity+' → '+newQty+' units. '+(reason||'')); closeM('stock-modal'); toast('Stock updated → '+newQty+' units','s'); }
   catch(e){ toast('Failed: '+e.message,'e'); }
 }
 
@@ -1134,7 +1137,7 @@ function renderSales(){
 
 function openSaleModal(){
   if(!can('sale')){toast('⛔ No permission to record sales','e');return;}
-  if(!BID){toast('No buyer context','e');return;}
+  const saleBID = BID || ME?.buyerId; if(!saleBID){toast('Enter a buyer first from the Buyers page','e');return;}
   g('sm-err').classList.add('h'); g('sm-info').classList.add('h');
   g('sm-tot').textContent=''; g('sm-qty').value='1'; g('sm-price').value=''; g('sm-cust').value='';
   const sel=g('sm-prod');
@@ -1153,9 +1156,9 @@ async function saveSale(){
   if(qty>prod.quantity) return ferr('sm-err','Only '+prod.quantity+' available.');
   try{
     const batch=db.batch();
-    const saleRef=db.collection('buyers').doc(BID).collection('sales').doc();
+    const saleRef=db.collection('buyers').doc(saleBID).collection('sales').doc();
     batch.set(saleRef,{productId:pid,productName:prod.name,category:prod.category||'',quantity:qty,unitPrice:price,total:qty*price,cashier:ME.name||'Staff',customer:cust,timestamp:firebase.firestore.FieldValue.serverTimestamp(),buyerId:BID});
-    batch.update(db.collection('buyers').doc(BID).collection('products').doc(pid),{quantity:firebase.firestore.FieldValue.increment(-qty)});
+    batch.update(db.collection('buyers').doc(saleBID).collection('products').doc(pid),{quantity:firebase.firestore.FieldValue.increment(-qty)});
     await batch.commit();
     // Check low stock
     const newQ=prod.quantity-qty;
@@ -1253,13 +1256,15 @@ async function saveStaff(){
   if(!can('staff')){toast('⛔ No permission','e');return;}
   if(!BID){toast('No buyer context','e');return;}
   const name=g('stm-name').value.trim(),email=g('stm-email').value.trim().toLowerCase(),pass=g('stm-pass').value,role=g('stm-role').value,phone=g('stm-phone').value.trim(),eid=g('stm-id').value;
+  const effectiveBID = BID || ME?.buyerId;
   if(!name||!email)return ferr('stm-err','Name and email required.');
   if(!eid&&!pass)return ferr('stm-err','Password required for new staff.');
   if(pass&&pass.length<6)return ferr('stm-err','Password must be 6+ chars.');
-  const data={name,email,role,phone,buyerId:BID};
+  if(!effectiveBID)return ferr('stm-err','No buyer selected. Enter a buyer first from the Buyers page.');
+  const data={name,email,role,phone,buyerId:effectiveBID};
   if(pass) data.password=pass;
   try{
-    const col=db.collection('buyers').doc(BID).collection('staff');
+    const col=db.collection('buyers').doc(effectiveBID).collection('staff');
     if(eid){await col.doc(eid).update(data);}else{await col.add(data);}
     closeM('staff-modal'); toast(eid?'Staff updated!':'Staff added!','s');
   }catch(e){ferr('stm-err','Failed: '+e.message);}
@@ -1269,7 +1274,7 @@ async function removeStaff(id,name){ if(!confirm('Remove '+name+'?'))return; if(
 // ── BUYERS (Super Admin) ───────────────────────────
 async function renderBuyers(){
   g('sa-b').textContent=BUYERS.length;
-  // Load stats for each buyer
+  g('buyers-sub').textContent=BUYERS.length+' registered buyer'+(BUYERS.length!==1?'s':'');
   let totalP=0,totalS=0,totalR=0;
   const statsProms=BUYERS.map(async b=>{
     const [ps,ss]=await Promise.all([db.collection('buyers').doc(b.id).collection('products').get(),db.collection('buyers').doc(b.id).collection('sales').get()]);
@@ -1281,6 +1286,7 @@ async function renderBuyers(){
   g('sa-p').textContent=totalP; g('sa-s').textContent=totalS; g('sa-r').textContent='$'+totalR.toFixed(2);
   g('buyers-sub').textContent=BUYERS.length+' registered buyer'+(BUYERS.length!==1?'s':'');
   const el=g('buyers-grid');
+  const wb=g('sa-welcome'); if(wb) wb.classList.toggle('h', BUYERS.length>0);
   el.innerHTML=BUYERS.length?BUYERS.map((b,i)=>{
     const st=stats.find(x=>x.id===b.id)||{prods:0,sales:0,rev:0};
     const col=COLORS[i%COLORS.length];
@@ -1303,10 +1309,11 @@ async function renderBuyers(){
         <div class="bc-stat"><div class="bc-sv" style="font-size:.85rem">$${st.rev.toFixed(0)}</div><div class="bc-sl">Revenue</div></div>
       </div>
       <div class="bc-btns">
-        <button class="btn btn-b btn-sm" style="flex:1" onclick="enterBuyer('${b.id}')">🏢 Enter</button>
+        <button class="btn btn-b btn-sm" style="flex:2" onclick="enterBuyer('${b.id}')">🏢 Enter & Manage</button>
         <button class="btn btn-o btn-sm" onclick="openBuyerModal('${b.id}')">✏️</button>
         <button class="btn btn-r btn-sm" onclick="deleteBuyer('${b.id}','${esc(b.name)}')">🗑</button>
       </div>
+      <div style="padding:0 12px 12px;font-size:.73rem;color:var(--t3)">PIN: <strong style="color:var(--navy);font-family:'JetBrains Mono',monospace">${b.pin||'Not set'}</strong> · Admin: <span>${esc(b.adminEmail)}</span></div>
     </div>`;
   }).join('')
   :'<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏢</div><div class="empty-title">No buyers yet</div><div class="empty-sub">Create your first buyer to get started</div></div>';
@@ -1320,8 +1327,7 @@ async function enterBuyer(bid){
   g('sa-bar').classList.add('h');
   g('ctx-bar').classList.remove('h');
   g('ctx-name').textContent=buyer.name;
-  g('nav-buyers').style.display='none';
-  applyRoleNav();
+  applyRoleNav();  // applyRoleNav will handle hiding buyers nav
   if(g('set-biz')) g('set-biz').value=CFG.bizName;
   if(g('set-cur')) g('set-cur').value=CFG.currency;
   if(g('set-thr')) g('set-thr').value=CFG.threshold;
@@ -1347,9 +1353,18 @@ async function saveBuyer(){
   const data={name,adminEmail:email,adminName:'Admin',pin:pin||'',currency:cur,type,address:addr,threshold:10};
   if(pass) data.adminPassword=pass;
   try{
-    if(eid){await db.collection('buyers').doc(eid).update(data);}
-    else{await db.collection('buyers').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
-    closeM('buyer-modal'); toast(eid?'Buyer updated!':'Buyer created! 🎉','s');
+    let newBuyerId = eid;
+    if(eid){
+      await db.collection('buyers').doc(eid).update(data);
+      closeM('buyer-modal'); toast('Buyer updated!','s');
+    } else {
+      const ref = await db.collection('buyers').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      newBuyerId = ref.id;
+      closeM('buyer-modal');
+      toast('Buyer created! 🎉 Entering inventory…','s');
+      // Auto-enter the new buyer so SA can immediately add products/staff
+      setTimeout(()=>enterBuyer(newBuyerId), 800);
+    }
   }catch(e){ferr('bm-err','Failed: '+e.message);}
 }
 async function deleteBuyer(id,name){
