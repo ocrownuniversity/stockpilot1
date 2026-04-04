@@ -354,7 +354,7 @@ tbody tr:hover{background:var(--bg)}
       <button class="nk" onclick="sPdel()">⌫</button>
     </div>
     <button class="btn-ghost" onclick="show('lock-screen')">👤 Staff / Buyer Login</button>
-    <div class="lfoot"><span class="pdot"></span>Firebase Sync · PIN: <strong>1990</strong></div>
+    <div class="lfoot"><span class="pdot"></span>Firebase Sync · Secured</div>
   </div>
 </div>
 
@@ -1333,7 +1333,7 @@ async function renderBuyers(){
           <div style="flex:1">
             <div class="bc-name">${esc(b.name)}</div>
             <div class="bc-meta">${esc(b.adminEmail)}</div>
-            <div class="bc-meta">${esc(b.address||'No address')} · PIN: <strong>${b.pin||'—'}</strong></div>
+            <div class="bc-meta">${esc(b.address||'No address')}</div>
           </div>
         </div>
       </div>
@@ -1347,7 +1347,7 @@ async function renderBuyers(){
         <button class="btn btn-o btn-sm" onclick="openBuyerModal('${b.id}')">✏️</button>
         <button class="btn btn-r btn-sm" onclick="deleteBuyer('${b.id}','${esc(b.name)}')">🗑</button>
       </div>
-      <div style="padding:0 12px 12px;font-size:.73rem;color:var(--t3)">PIN: <strong style="color:var(--navy);font-family:'JetBrains Mono',monospace">${b.pin||'Not set'}</strong> · Admin: <span>${esc(b.adminEmail)}</span></div>
+      <div style="padding:0 12px 12px;font-size:.73rem;color:var(--t3)">Admin: <span>${esc(b.adminEmail)}</span></div>
     </div>`;
   }).join('')
   :'<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏢</div><div class="empty-title">No buyers yet</div><div class="empty-sub">Create your first buyer to get started</div></div>';
