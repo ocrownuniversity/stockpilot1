@@ -836,30 +836,53 @@ async function pCheck(){
 
 // ── STAFF EMAIL LOGIN ──────────────────────────────
 async function doLogin(){
-  const email = g('l-email').value.trim();
+  const email = g('l-email').value.trim().toLowerCase();
   const pass  = g('l-pass').value;
   if(!email||!pass) return ferr('login-err','Fill in all fields.');
   g('login-btn').innerHTML='<div style="width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>';
   g('login-btn').disabled=true;
+
   try {
-    // Search staff across all buyers
-    const snap = await db.collectionGroup('staff').where('email','==',email.toLowerCase()).get();
-    if(snap.empty){ throw new Error('No account found'); }
-    const sdoc = snap.docs[0];
-    const su   = sdoc.data();
-    if(su.password !== pass) throw new Error('Wrong password');
-    BID = sdoc.ref.parent.parent.id;
-    ME  = {id:sdoc.id, name:su.name, role:su.role, email:su.email, buyerId:BID};
-    // Load buyer cfg
-    const bdoc = await db.collection('buyers').doc(BID).get();
-    if(bdoc.exists){
-      const bd = bdoc.data();
-      CFG = {bizName:bd.name, currency:bd.currency||'$', threshold:bd.threshold||10, address:bd.address||''};
+    // First: check if email matches a buyer admin directly (no index needed)
+    const buyerAdminSnap = await db.collection('buyers').where('adminEmail','==',email).get();
+    if(!buyerAdminSnap.empty){
+      const bdoc = buyerAdminSnap.docs[0];
+      const bd   = bdoc.data();
+      if(bd.adminPassword === pass){
+        BID = bdoc.id;
+        ME  = {id:'admin-'+BID, name:bd.adminName||'Admin', role:'admin', email:bd.adminEmail, buyerId:BID};
+        CFG = {bizName:bd.name, currency:bd.currency||'$', threshold:bd.threshold||10, address:bd.address||''};
+        show('app'); setupApp(); return;
+      } else {
+        throw new Error('Wrong password');
+      }
     }
-    show('app');
-    setupApp();
+
+    // Second: search staff within each buyer (avoids collectionGroup index requirement)
+    const buyersSnap = await db.collection('buyers').get();
+    let found = null, foundBID = null;
+    for(const bDoc of buyersSnap.docs){
+      const staffSnap = await bDoc.ref.collection('staff').where('email','==',email).get();
+      if(!staffSnap.empty){
+        const su = staffSnap.docs[0].data();
+        if(su.password === pass){
+          found    = {id:staffSnap.docs[0].id, ...su};
+          foundBID = bDoc.id;
+          // Also get buyer config
+          const bd = bDoc.data();
+          CFG = {bizName:bd.name, currency:bd.currency||'$', threshold:bd.threshold||10, address:bd.address||''};
+          break;
+        }
+      }
+    }
+
+    if(!found){ throw new Error('Invalid email or password'); }
+    BID = foundBID;
+    ME  = {id:found.id, name:found.name, role:found.role, email:found.email, buyerId:BID};
+    show('app'); setupApp();
+
   } catch(e){
-    ferr('login-err', e.message==='No account found'||e.message==='Wrong password' ? 'Invalid email or password.' : 'Error: '+e.message);
+    ferr('login-err', e.message||'Login failed. Check your credentials.');
   } finally {
     g('login-btn').innerHTML='Sign In →';
     g('login-btn').disabled=false;
@@ -1137,7 +1160,7 @@ function renderSales(){
 
 function openSaleModal(){
   if(!can('sale')){toast('⛔ No permission to record sales','e');return;}
-  const saleBID = BID || ME?.buyerId; if(!saleBID){toast('Enter a buyer first from the Buyers page','e');return;}
+  const activeBID = BID || ME?.buyerId; if(!activeBID){toast('You need to be logged into a buyer account to record sales.','e');return;}
   g('sm-err').classList.add('h'); g('sm-info').classList.add('h');
   g('sm-tot').textContent=''; g('sm-qty').value='1'; g('sm-price').value=''; g('sm-cust').value='';
   const sel=g('sm-prod');
@@ -1148,24 +1171,35 @@ function onSP(){ const sel=g('sm-prod'),opt=sel.options[sel.selectedIndex]; if(!
 function updTotal(){ const q=parseInt(g('sm-qty').value)||0,p=parseFloat(g('sm-price').value)||0; g('sm-tot').textContent=q>0&&p>0?'Total: '+fmt(q*p):''; }
 async function saveSale(){
   if(!can('sale')){toast('⛔ No permission','e');return;}
-  if(!BID)return;
+  // Resolve buyer ID from global state — never depends on outer scope vars
+  const activeBID = BID || ME?.buyerId;
+  if(!activeBID){ ferr('sm-err','No buyer context. Please logout and log back in.'); return; }
   const pid=g('sm-prod').value, qty=parseInt(g('sm-qty').value), price=parseFloat(g('sm-price').value), cust=g('sm-cust').value.trim();
   if(!pid) return ferr('sm-err','Select a product.');
   if(!qty||qty<1) return ferr('sm-err','Enter valid quantity.');
-  const prod=PRODS.find(p=>p.id===pid); if(!prod)return;
+  const prod=PRODS.find(p=>p.id===pid);
+  if(!prod) return ferr('sm-err','Product not found.');
   if(qty>prod.quantity) return ferr('sm-err','Only '+prod.quantity+' available.');
   try{
     const batch=db.batch();
-    const saleRef=db.collection('buyers').doc(saleBID).collection('sales').doc();
-    batch.set(saleRef,{productId:pid,productName:prod.name,category:prod.category||'',quantity:qty,unitPrice:price,total:qty*price,cashier:ME.name||'Staff',customer:cust,timestamp:firebase.firestore.FieldValue.serverTimestamp(),buyerId:BID});
-    batch.update(db.collection('buyers').doc(saleBID).collection('products').doc(pid),{quantity:firebase.firestore.FieldValue.increment(-qty)});
+    const saleRef=db.collection('buyers').doc(activeBID).collection('sales').doc();
+    batch.set(saleRef,{
+      productId:pid, productName:prod.name, category:prod.category||'',
+      quantity:qty, unitPrice:price, total:qty*price,
+      cashier:ME.name||'Staff', customer:cust,
+      timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+      buyerId:activeBID
+    });
+    batch.update(
+      db.collection('buyers').doc(activeBID).collection('products').doc(pid),
+      {quantity:firebase.firestore.FieldValue.increment(-qty)}
+    );
     await batch.commit();
-    // Check low stock
     const newQ=prod.quantity-qty;
     if(newQ<=(prod.lowAt||CFG.threshold)) addNotif('warn','Low Stock',prod.name+' is low ('+newQ+' left).');
-    closeM('sale-modal'); toast('Sale recorded! '+fmt(qty*price),'s');
-    // Show receipt
-    setTimeout(()=>showRcptData({id:saleRef.id,productName:prod.name,quantity:qty,unitPrice:price,total:qty*price,cashier:ME.name,customer:cust,timestamp:new Date()}),400);
+    closeM('sale-modal');
+    toast('Sale recorded! '+fmt(qty*price),'s');
+    setTimeout(()=>showRcptData({id:saleRef.id,productName:prod.name,quantity:qty,unitPrice:price,total:qty*price,cashier:ME.name||'Staff',customer:cust,timestamp:new Date()}),400);
   }catch(e){ ferr('sm-err','Failed: '+e.message); }
 }
 
@@ -1226,17 +1260,17 @@ function drawChart(cid, days, salesData){
 
 // ── NOTIFICATIONS ──────────────────────────────────
 async function addNotif(type,title,text){
-  if(!BID)return;
-  try{ await db.collection('buyers').doc(BID).collection('notifications').add({type,title,text,time:firebase.firestore.FieldValue.serverTimestamp(),read:false,buyerId:BID}); }catch(e){console.warn('notif:',e);}
+  const notifBID = BID || ME?.buyerId; if(!notifBID)return; const BID_=notifBID;
+  try{ await db.collection('buyers').doc(BID_).collection('notifications').add({type,title,text,time:firebase.firestore.FieldValue.serverTimestamp(),read:false,buyerId:BID_}); }catch(e){console.warn('notif:',e);}
 }
 function renderNotifs(){
   const el=g('notif-list');
   el.innerHTML=NOTIFS.length?NOTIFS.map(n=>`<div class="ni ${n.read?'read':'unread'} ${n.type==='warn'?'warn':''}" onclick="markRead('${n.id}')"><div class="ni-icon" style="background:${n.type==='warn'?'rgba(245,158,11,.12)':'rgba(37,99,235,.1)'}">${n.type==='warn'?'⚠️':'ℹ️'}</div><div style="flex:1"><div class="ni-title">${esc(n.title)}</div><div class="ni-text">${esc(n.text)}</div><div class="ni-time">${tAgo(n.time)}</div></div>${!n.read?'<div class="ni-dot"></div>':''}</div>`).join('')
   :'<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">No alerts</div><div class="empty-sub">All caught up!</div></div>';
 }
-async function markRead(id){ if(!BID)return; try{ await db.collection('buyers').doc(BID).collection('notifications').doc(id).update({read:true}); }catch(e){} }
-async function markAllRead(){ if(!BID)return; const batch=db.batch(); NOTIFS.filter(n=>!n.read).forEach(n=>batch.update(db.collection('buyers').doc(BID).collection('notifications').doc(n.id),{read:true})); try{await batch.commit();toast('All read','s');}catch(e){} }
-function checkLowStock(){ PRODS.filter(p=>p.quantity<=(p.lowAt||CFG.threshold)).forEach(p=>{ const exists=NOTIFS.some(n=>!n.read&&n.text?.includes(p.name)); if(!exists) addNotif('warn','Low Stock',p.name+' is low ('+p.quantity+' units).'); }); }
+async function markRead(id){ const b=BID||ME?.buyerId; if(!b)return; try{ await db.collection('buyers').doc(b).collection('notifications').doc(id).update({read:true}); }catch(e){} }
+async function markAllRead(){ const b=BID||ME?.buyerId; if(!b)return; const batch=db.batch(); NOTIFS.filter(n=>!n.read).forEach(n=>batch.update(db.collection('buyers').doc(b).collection('notifications').doc(n.id),{read:true})); try{await batch.commit();toast('All read','s');}catch(e){} }
+function checkLowStock(){ const cb=BID||ME?.buyerId; if(!cb)return; PRODS.filter(p=>p.quantity<=(p.lowAt||CFG.threshold)).forEach(p=>{ const exists=NOTIFS.some(n=>!n.read&&n.text?.includes(p.name)); if(!exists) addNotif('warn','Low Stock',p.name+' is low ('+p.quantity+' units).'); }); }
 function updBadges(){ const u=NOTIFS.filter(n=>!n.read).length; const ts=SALES.filter(s=>new Date(s.timestamp).toDateString()===new Date().toDateString()).length; g('sb-notif').textContent=u||''; g('sb-sales').textContent=ts||''; u>0?g('tb-ndot').classList.remove('h'):g('tb-ndot').classList.add('h'); }
 
 // ── STAFF ──────────────────────────────────────────
@@ -1269,7 +1303,7 @@ async function saveStaff(){
     closeM('staff-modal'); toast(eid?'Staff updated!':'Staff added!','s');
   }catch(e){ferr('stm-err','Failed: '+e.message);}
 }
-async function removeStaff(id,name){ if(!confirm('Remove '+name+'?'))return; if(!BID)return; try{await db.collection('buyers').doc(BID).collection('staff').doc(id).delete();toast('Staff removed','s');}catch(e){toast('Failed: '+e.message,'e');} }
+async function removeStaff(id,name){ if(!confirm('Remove '+name+'?'))return; const b=BID||ME?.buyerId; if(!b)return; try{await db.collection('buyers').doc(b).collection('staff').doc(id).delete();toast('Staff removed','s');}catch(e){toast('Failed: '+e.message,'e');} }
 
 // ── BUYERS (Super Admin) ───────────────────────────
 async function renderBuyers(){
@@ -1378,7 +1412,7 @@ async function saveSettings(){
   CFG.currency=g('set-cur').value.trim()||'$';
   CFG.threshold=parseInt(g('set-thr').value)||10;
   CFG.address=g('set-addr').value.trim();
-  if(BID){try{await db.collection('buyers').doc(BID).update({name:CFG.bizName,currency:CFG.currency,threshold:CFG.threshold,address:CFG.address}); toast('Settings saved!','s');}catch(e){toast('Save failed: '+e.message,'e');}}
+  const sb=BID||ME?.buyerId; if(sb){try{await db.collection('buyers').doc(sb).update({name:CFG.bizName,currency:CFG.currency,threshold:CFG.threshold,address:CFG.address}); toast('Settings saved!','s');}catch(e){toast('Save failed: '+e.message,'e');}}
   else toast('Settings saved locally','s');
 }
 
