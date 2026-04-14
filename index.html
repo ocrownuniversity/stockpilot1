@@ -394,6 +394,39 @@ tbody tr:hover{background:var(--bg)}
 .lab-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bord)}
 .lab-row:last-child{border-bottom:none}
 .bp-chart-wrap{background:var(--bg);border-radius:10px;padding:14px;margin-top:12px}
+
+/* ── PATIENT ACTION PILL BUTTONS (screenshot style) ── */
+.pt-action-btn{
+  padding:7px 14px;border-radius:99px;font-size:.81rem;font-weight:700;
+  cursor:pointer;border:1.5px solid #CBD5E1;background:#fff;color:#334155;
+  transition:all .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+}
+.pt-action-btn:hover{border-color:#2563EB;color:#2563EB;background:#EFF6FF}
+.pt-action-btn.on{background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(37,99,235,.35)}
+/* Vital cards exactly like screenshot — 2 col on mobile */
+.vital-card-new{
+  background:#fff;border-radius:14px;padding:16px 12px;text-align:center;
+  border:1px solid var(--bord);box-shadow:var(--sh);
+}
+.vital-card-new .vc-icon{font-size:1.6rem;margin-bottom:6px}
+.vital-card-new .vc-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#6B7280;margin-bottom:6px}
+.vital-card-new .vc-val{font-size:1.25rem;font-weight:800;color:#111827;font-family:'JetBrains Mono',monospace;line-height:1.1;margin-bottom:6px}
+.vital-card-new .vc-status{display:inline-block;font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.3px}
+.vc-normal{background:#D1FAE5;color:#065F46}
+.vc-elevated{background:#FDE68A;color:#78350F}
+.vc-high{background:#FEE2E2;color:#991B1B}
+.vc-low{background:#EDE9FE;color:#4C1D95}
+/* Record cards */
+.rec-card{background:#fff;border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.rec-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.rec-card-title{font-size:.9rem;font-weight:800;color:var(--navy)}
+.rec-card-date{font-size:.74rem;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.rec-card-body{font-size:.84rem;color:var(--t2);line-height:1.5}
+.rec-card-sub{font-size:.78rem;color:var(--t3);margin-top:4px}
+.lab-status-badge{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase}
+.lab-req{background:#DBEAFE;color:#1E40AF}
+.lab-pend{background:#FEF3C7;color:#92400E}
+.lab-done{background:#D1FAE5;color:#065F46}
 </style>
 </head>
 <body>
@@ -967,56 +1000,115 @@ tbody tr:hover{background:var(--bg)}
 
 
 <!-- Patient Detail Modal -->
-<div id="patient-modal" class="mo h"><div class="mb" style="max-width:680px;max-height:95vh">
-  <div class="mh" style="background:linear-gradient(135deg,#0F1F45,#1E3A8A);color:#fff;border-radius:14px 14px 0 0">
-    <div>
-      <div style="font-size:.7rem;opacity:.6;font-family:'JetBrains Mono',monospace" id="pt-modal-id">PT-0001</div>
-      <h3 style="color:#fff;font-size:1.05rem" id="pt-modal-name">Patient Name</h3>
-      <div style="font-size:.78rem;opacity:.7;margin-top:2px" id="pt-modal-sub">Age · Phone</div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="editCurrentPatient()">✏️ Edit</button>
-      <button class="mx" style="color:rgba(255,255,255,.7)" onclick="closeM('patient-modal')">✕</button>
-    </div>
-  </div>
+<div id="patient-modal" class="mo h"><div class="mb" style="max-width:520px;max-height:96vh;overflow-y:auto;border-radius:18px">
 
-  <!-- Medical Alert -->
-  <div id="pt-modal-alert" class="med-alert h">⚠️ <span id="pt-modal-alert-text"></span></div>
-
-  <!-- Tab Pills -->
-  <div style="padding:14px 20px 0">
-    <div class="ph-tabs">
-      <div class="ph-tab on" onclick="phTab('vitals',this)">❤️ Vital Signs</div>
-      <div class="ph-tab" onclick="phTab('diagnosis',this)">🔬 Diagnosis</div>
-      <div class="ph-tab" onclick="phTab('prescription',this)">💊 Prescription</div>
-      <div class="ph-tab" onclick="phTab('lab',this)">🧪 Lab</div>
-      <div class="ph-tab" onclick="phTab('notes',this)">📝 Notes</div>
-      <div class="ph-tab" onclick="phTab('sales',this)">🛒 Sales History</div>
+  <!-- ── HEADER (matches screenshot exactly) ── -->
+  <div style="background:linear-gradient(135deg,#1a2f6b,#2a4a9f);padding:20px 18px 16px;position:relative">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:2px;line-height:1.2" id="pt-modal-name">Patient Name</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.65);font-family:'JetBrains Mono',monospace" id="pt-modal-id-sub">PT-0001 · 0y yrs · —</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:10px">
+        <button onclick="editCurrentPatient()" style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer">✏️ Edit</button>
+        <button onclick="closeM('patient-modal')" style="background:transparent;border:none;color:rgba(255,255,255,.7);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1">✕</button>
+      </div>
     </div>
   </div>
 
-  <div class="mbd" style="padding-top:4px">
+  <!-- ── PATIENT INFO TABLE (like screenshot) ── -->
+  <div style="background:#fff;border-bottom:1px solid var(--bord)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:12px 16px;border-right:1px solid #F3F4F6">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">PATIENT ID</div>
+        <div style="font-size:.88rem;font-weight:700;color:#111;font-family:'JetBrains Mono',monospace" id="pt-info-id">—</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">FULL NAME</div>
+        <div style="font-size:.88rem;font-weight:700;color:#111" id="pt-info-name">—</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:12px 16px;border-right:1px solid #F3F4F6">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">AGE</div>
+        <div style="font-size:.88rem;font-weight:600;color:#111" id="pt-info-age">—</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">GENDER</div>
+        <div style="font-size:.88rem;font-weight:600;color:#111" id="pt-info-gender">—</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:12px 16px;border-right:1px solid #F3F4F6">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">PHONE</div>
+        <div style="font-size:.88rem;font-weight:600;color:#2563EB" id="pt-info-phone">—</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">ADDRESS</div>
+        <div style="font-size:.82rem;font-weight:600;color:#111;line-height:1.4" id="pt-info-addr">—</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #F3F4F6">
+      <div style="padding:12px 16px;border-right:1px solid #F3F4F6">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">EMERGENCY CONTACT</div>
+        <div style="font-size:.85rem;font-weight:600;color:#111" id="pt-info-emerg">—</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#9CA3AF;margin-bottom:3px">PURCHASES</div>
+        <div style="font-size:.85rem;font-weight:600;color:#111" id="pt-info-purchases">0 · ₦0.00 spent</div>
+      </div>
+    </div>
+
+    <!-- Medical Alert -->
+    <div id="pt-modal-alert" class="h" style="background:#FFF8E6;border-left:4px solid #F59E0B;margin:10px 14px;border-radius:8px;padding:10px 13px;font-size:.83rem;font-weight:600;color:#92400E;display:flex;align-items:center;gap:8px">
+      ⚠️ <span id="pt-modal-alert-text" style="font-weight:700">Medical History / Allergies: </span>
+    </div>
+  </div>
+
+  <!-- ── ACTION BUTTONS (pill style matching screenshot) ── -->
+  <div style="padding:14px 16px;background:#F8FAFF;border-bottom:1px solid var(--bord)">
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button class="pt-action-btn on" id="ptab-vitals" onclick="phTab('vitals',this)">❤️ Vital Signs</button>
+      <button class="pt-action-btn" id="ptab-diagnosis" onclick="phTab('diagnosis',this)">🔬 Diagnosis</button>
+      <button class="pt-action-btn" id="ptab-prescription" onclick="phTab('prescription',this)">💊 Prescription</button>
+      <button class="pt-action-btn" id="ptab-labreq" onclick="phTab('labreq',this)">🧪 Lab Request</button>
+      <button class="pt-action-btn" id="ptab-labres" onclick="phTab('labres',this)">📋 Lab Result</button>
+      <button class="pt-action-btn" id="ptab-notes" onclick="phTab('notes',this)">📝 Note</button>
+      <button class="pt-action-btn" id="ptab-sales" onclick="phTab('sales',this)">🛒 Sales History</button>
+    </div>
+  </div>
+
+  <!-- ── TAB CONTENT ── -->
+  <div style="padding:16px;background:var(--bg);min-height:300px">
+
     <!-- VITALS TAB -->
     <div id="pht-vitals">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:.85rem;font-weight:700;color:var(--navy)">❤️ Vital Signs</div>
-        <button class="btn btn-b btn-sm" onclick="openVitalsModal()">+ Add</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--navy)">❤️ Vital Signs</div>
+        <button class="btn btn-b btn-sm" onclick="openVitalsModal()" style="background:#7C3AED;border:none">+ Add</button>
       </div>
-      <div class="vitals-grid" id="pt-latest-vitals"></div>
-      <div class="bp-chart-wrap">
-        <div style="font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:10px">BP Trend</div>
-        <canvas id="bp-chart" height="120"></canvas>
+      <!-- Latest vitals cards -->
+      <div id="pt-latest-vitals" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
+      <!-- BP Trend chart -->
+      <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid var(--bord);margin-bottom:14px">
+        <div style="font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:12px">BP Trend</div>
+        <canvas id="bp-chart" height="130"></canvas>
+        <div style="display:flex;gap:16px;justify-content:center;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--t2)"><div style="width:20px;height:3px;background:#EF4444;border-radius:2px"></div>Systolic</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--t2)"><div style="width:20px;height:3px;background:#2563EB;border-radius:2px"></div>Diastolic</div>
+        </div>
       </div>
-      <div style="margin-top:14px">
-        <div style="font-size:.78rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">History</div>
+      <!-- Vitals history -->
+      <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid var(--bord)">
+        <div style="font-size:.78rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Visit History</div>
         <div id="vitals-history"></div>
       </div>
     </div>
 
     <!-- DIAGNOSIS TAB -->
     <div id="pht-diagnosis" class="h">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:.85rem;font-weight:700;color:var(--navy)">🔬 Diagnosis Records</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--navy)">🔬 Diagnosis</div>
         <button class="btn btn-b btn-sm" onclick="openDiagModal()">+ Add</button>
       </div>
       <div id="diag-list"></div>
@@ -1024,36 +1116,46 @@ tbody tr:hover{background:var(--bg)}
 
     <!-- PRESCRIPTION TAB -->
     <div id="pht-prescription" class="h">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:.85rem;font-weight:700;color:var(--navy)">💊 Prescriptions</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--navy)">💊 Prescriptions</div>
         <button class="btn btn-b btn-sm" onclick="openRxModal()">+ Add</button>
       </div>
       <div id="rx-list"></div>
     </div>
 
-    <!-- LAB TAB -->
-    <div id="pht-lab" class="h">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:.85rem;font-weight:700;color:var(--navy)">🧪 Lab Requests & Results</div>
-        <button class="btn btn-b btn-sm" onclick="openLabModal()">+ Request</button>
+    <!-- LAB REQUEST TAB -->
+    <div id="pht-labreq" class="h">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--navy)">🧪 Lab Requests</div>
+        <button class="btn btn-b btn-sm" onclick="openLabModal('request')">+ Request</button>
       </div>
-      <div id="lab-list"></div>
+      <div id="labreq-list"></div>
+    </div>
+
+    <!-- LAB RESULT TAB -->
+    <div id="pht-labres" class="h">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--navy)">📋 Lab Results</div>
+        <button class="btn btn-b btn-sm" onclick="openLabModal('result')">+ Add Result</button>
+      </div>
+      <div id="labres-list"></div>
     </div>
 
     <!-- NOTES TAB -->
     <div id="pht-notes" class="h">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:.85rem;font-weight:700;color:var(--navy)">📝 Clinical Notes</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:.92rem;font-weight:800;color:var(--navy)">📝 Clinical Notes</div>
         <button class="btn btn-b btn-sm" onclick="openNoteModal()">+ Add Note</button>
       </div>
       <div id="note-list"></div>
     </div>
 
-    <!-- SALES TAB -->
+    <!-- SALES HISTORY TAB -->
     <div id="pht-sales" class="h">
-      <div style="font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:12px">🛒 Purchase History</div>
+      <div style="font-size:.92rem;font-weight:800;color:var(--navy);margin-bottom:14px">🛒 Sales History</div>
       <div id="pt-sales-list"></div>
     </div>
+
   </div>
 </div></div>
 
@@ -1103,7 +1205,9 @@ tbody tr:hover{background:var(--bg)}
   <div class="mh"><h3>🔬 Add Diagnosis</h3><button class="mx" onclick="closeM('diag-modal')">✕</button></div>
   <div class="mbd">
     <div class="fg2"><label class="fl">Date</label><input class="fc" type="date" id="d-date"/></div>
+    <div class="fg2"><label class="fl">Patient Complaint</label><input class="fc" id="d-complaint" placeholder="e.g. Headache, Fever, Cough…"/></div>
     <div class="fg2"><label class="fl">Diagnosis *</label><input class="fc" id="d-diag" placeholder="e.g. Malaria, Hypertension…"/></div>
+    <div class="fg2"><label class="fl">Treatment / Plan</label><textarea class="fc" id="d-treatment" rows="2" placeholder="Treatment plan or instructions…"></textarea></div>
     <div class="fg2"><label class="fl">Doctor / Clinician</label><input class="fc" id="d-doctor" placeholder="Dr. Name"/></div>
     <div class="fg2"><label class="fl">Notes</label><textarea class="fc" id="d-notes" rows="2" placeholder="Additional details…"></textarea></div>
   </div>
@@ -1130,7 +1234,7 @@ tbody tr:hover{background:var(--bg)}
     <div class="fg2"><label class="fl">Date</label><input class="fc" type="date" id="lab-date"/></div>
     <div class="fg2"><label class="fl">Test Name *</label><input class="fc" id="lab-test" placeholder="e.g. Malaria RDT, Full Blood Count…"/></div>
     <div class="fg2"><label class="fl">Status</label><select class="fc" id="lab-status"><option value="requested">Requested</option><option value="pending">Pending</option><option value="completed">Completed</option></select></div>
-    <div class="fg2"><label class="fl">Result</label><textarea class="fc" id="lab-result" rows="2" placeholder="Enter result when available…"></textarea></div>
+    <div class="fg2" id="lab-result-row"><label class="fl">Result</label><textarea class="fc" id="lab-result" rows="2" placeholder="Enter result here…"></textarea></div>
     <div class="fg2"><label class="fl">Notes</label><input class="fc" id="lab-notes" placeholder="Additional notes…"/></div>
   </div>
   <div class="mf"><button class="btn btn-o" onclick="closeM('lab-modal')">Cancel</button><button class="btn btn-b" onclick="saveLab()">Save</button></div>
@@ -2979,14 +3083,34 @@ function editCurrentPatient(){
 async function openPatientDetail(pid){
   const p=PATIENTS.find(x=>x.id===pid); if(!p) return;
   CURRENT_PATIENT=p;
-  const age=p.dob?getAge(p.dob)+'y':'—';
-  g('pt-modal-id').textContent=p.patientId||pid.slice(-8).toUpperCase();
-  g('pt-modal-name').textContent=p.name;
-  g('pt-modal-sub').textContent=age+' · '+(p.gender||'—')+' · '+(p.phone||'—');
-  if(p.medical){
-    g('pt-modal-alert').classList.remove('h');
-    g('pt-modal-alert-text').textContent='Medical History / Allergies: '+p.medical;
-  } else g('pt-modal-alert').classList.add('h');
+  const age=p.dob?getAge(p.dob)+'y yrs':'0y yrs';
+  const ptId=p.patientId||('PT-'+pid.slice(-4).toUpperCase());
+  // Populate header
+  if(g('pt-modal-name'))  g('pt-modal-name').textContent=p.name;
+  if(g('pt-modal-id-sub'))g('pt-modal-id-sub').textContent=ptId+' · '+age+' · '+(p.bloodGroup||'—');
+  // Populate info table
+  if(g('pt-info-id'))     g('pt-info-id').textContent=ptId;
+  if(g('pt-info-name'))   g('pt-info-name').textContent=p.name;
+  if(g('pt-info-age'))    g('pt-info-age').textContent=age;
+  if(g('pt-info-gender')) g('pt-info-gender').textContent=p.gender||'—';
+  if(g('pt-info-phone'))  g('pt-info-phone').textContent=p.phone||'—';
+  if(g('pt-info-addr'))   g('pt-info-addr').textContent=p.address||'—';
+  if(g('pt-info-emerg'))  g('pt-info-emerg').textContent=p.emergency||'—';
+  // Purchases summary
+  const custSales=SALES.filter(s=>s.customer&&s.customer.toLowerCase()===p.name.toLowerCase()&&s.status!=='voided');
+  const spent=custSales.reduce((a,s)=>a+(s.total||0),0);
+  if(g('pt-info-purchases')) g('pt-info-purchases').textContent=custSales.length+' · '+fmt(spent)+' spent';
+  // Medical alert
+  const alertEl=g('pt-modal-alert');
+  if(alertEl){
+    if(p.medical){
+      alertEl.style.display='flex';
+      const sp=g('pt-modal-alert-text');
+      if(sp) sp.textContent='Medical History / Allergies: '+p.medical;
+    } else {
+      alertEl.style.display='none';
+    }
+  }
   phTab('vitals',null);
   openM('patient-modal');
   loadPatientTab('vitals');
@@ -2994,15 +3118,15 @@ async function openPatientDetail(pid){
 
 function phTab(tab,btn){
   ACTIVE_PH_TAB=tab;
-  ['vitals','diagnosis','prescription','lab','notes','sales'].forEach(t=>{
+  ['vitals','diagnosis','prescription','labreq','labres','notes','sales'].forEach(t=>{
     const el=g('pht-'+t); if(el) el.classList.toggle('h',t!==tab);
   });
-  document.querySelectorAll('.ph-tab').forEach(b=>b.classList.remove('on'));
+  // Update pill buttons
+  document.querySelectorAll('.pt-action-btn').forEach(b=>b.classList.remove('on'));
   if(btn) btn.classList.add('on');
   else {
-    document.querySelectorAll('.ph-tab').forEach(b=>{
-      if(b.textContent.toLowerCase().includes(tab.substring(0,4))) b.classList.add('on');
-    });
+    const el=g('ptab-'+tab);
+    if(el) el.classList.add('on');
   }
   loadPatientTab(tab);
 }
@@ -3026,9 +3150,13 @@ async function loadPatientTab(tab){
       const snap=await col.collection('prescriptions').orderBy('date','desc').get();
       renderRxList(snap.docs.map(d=>({id:d.id,...d.data()})));
     }
-    else if(tab==='lab'){
-      const snap=await col.collection('labs').orderBy('date','desc').get();
-      renderLabList(snap.docs.map(d=>({id:d.id,...d.data()})));
+    else if(tab==='labreq'){
+      const snap=await col.collection('labs').where('recordType','==','request').orderBy('date','desc').get();
+      renderLabReqList(snap.docs.map(d=>({id:d.id,...d.data()})));
+    }
+    else if(tab==='labres'){
+      const snap=await col.collection('labs').where('recordType','==','result').orderBy('date','desc').get();
+      renderLabResList(snap.docs.map(d=>({id:d.id,...d.data()})));
     }
     else if(tab==='notes'){
       const snap=await col.collection('notes').orderBy('date','desc').get();
@@ -3044,18 +3172,29 @@ async function loadPatientTab(tab){
 // ── VITAL SIGNS ────────────────────────────────────
 function renderLatestVitals(v){
   const el=g('pt-latest-vitals'); if(!el) return;
-  if(!v){el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--t3);font-size:.85rem;padding:16px">No vital signs recorded yet.</div>';return;}
-  const bpStatus=getBPStatus(v.bp); const sugarStatus=getSugarStatus(v.sugar);
-  const tempStatus=getTempStatus(v.temp); const pulseStatus=getPulseStatus(v.pulse);
-  const bmi=v.weight&&v.height?(v.weight/((v.height/100)**2)).toFixed(1):null;
-  el.innerHTML=[
-    {icon:'🌡️',label:'TEMPERATURE',val:v.temp?(v.temp+'°C'):'—',status:tempStatus},
-    {icon:'💉',label:'BLOOD PRESSURE',val:v.bp||'—',status:bpStatus},
-    {icon:'🩸',label:'BLOOD SUGAR',val:v.sugar?(v.sugar+' mg/dL'):'—',status:sugarStatus},
-    {icon:'💗',label:'PULSE',val:v.pulse?(v.pulse+' bpm'):'—',status:pulseStatus},
-    {icon:'⚖️',label:'WEIGHT',val:v.weight?(v.weight+' kg'):'—',status:''},
-    {icon:'📊',label:'BMI',val:bmi||'—',status:bmi?getBMIStatus(bmi):''},
-  ].map(x=>`<div class="vital-box"><div class="vital-icon">${x.icon}</div><div class="vital-label">${x.label}</div><div class="vital-val">${esc(x.val)}</div>${x.status?`<div class="vital-status ${x.status.cls}">${x.status.label}</div>`:''}</div>`).join('');
+  if(!v){
+    el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--t3);font-size:.85rem;padding:24px;background:#fff;border-radius:12px;border:1px solid var(--bord)">No vital signs recorded yet.<br><span style="font-size:.78rem">Click "+ Add" to record vitals</span></div>';
+    return;
+  }
+  const bpSt=getBPStatus(v.bp), sugarSt=getSugarStatus(v.sugar);
+  const tempSt=getTempStatus(v.temp), pulseSt=getPulseStatus(v.pulse);
+  const bmi=v.weight&&v.height?parseFloat((v.weight/((v.height/100)**2)).toFixed(1)):null;
+  const bmiSt=bmi?getBMIStatus(bmi):null;
+  const cards=[
+    {icon:'🌡️',  label:'TEMPERATURE',    val:v.temp?(v.temp+'°C'):'—',   st:tempSt},
+    {icon:'🩸',  label:'BLOOD PRESSURE',  val:v.bp||'—',                   st:bpSt},
+    {icon:'💧',  label:'BLOOD SUGAR',     val:v.sugar?(v.sugar+' mg/dL'):'—', st:sugarSt},
+    {icon:'💗',  label:'PULSE',           val:v.pulse?(v.pulse+' bpm'):'—',st:pulseSt},
+    {icon:'⚖️',  label:'WEIGHT',          val:v.weight?(v.weight+' kg'):'—',  st:null},
+    {icon:'📊',  label:'BMI',             val:bmi||'—',                    st:bmiSt},
+  ];
+  el.innerHTML=cards.map(c=>`
+    <div class="vital-card-new">
+      <div class="vc-icon">${c.icon}</div>
+      <div class="vc-label">${c.label}</div>
+      <div class="vc-val">${esc(String(c.val))}</div>
+      ${c.st?`<div class="vc-status ${c.st.cls==='vs-normal'?'vc-normal':c.st.cls==='vs-elevated'?'vc-elevated':c.st.cls==='vs-high'?'vc-high':'vc-low'}">${c.st.label}</div>`:''}
+    </div>`).join('');
 }
 
 function renderVitalsHistory(records){
@@ -3167,14 +3306,42 @@ function openDiagModal(){ g('d-date').value=new Date().toISOString().slice(0,10)
 async function saveDiag(){
   const b=BID||ME?.buyerId; if(!b||!CURRENT_PATIENT) return;
   const diag=g('d-diag').value.trim(); if(!diag){toast('Enter diagnosis','e');return;}
-  const data={date:g('d-date').value,diagnosis:diag,doctor:g('d-doctor').value.trim(),notes:g('d-notes').value.trim(),recordedBy:ME.name||'Staff',timestamp:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={
+    date:g('d-date').value,
+    complaint:g('d-complaint')?.value.trim()||'',
+    diagnosis:diag,
+    treatment:g('d-treatment')?.value.trim()||'',
+    doctor:g('d-doctor').value.trim(),
+    notes:g('d-notes').value.trim(),
+    recordedBy:ME.name||'Staff',
+    timestamp:firebase.firestore.FieldValue.serverTimestamp()
+  };
   try{await db.collection('buyers').doc(b).collection('patients').doc(CURRENT_PATIENT.id).collection('diagnoses').add(data);closeM('diag-modal');toast('Diagnosis saved!','s');loadPatientTab('diagnosis');}
   catch(e){toast('Failed: '+e.message,'e');}
 }
+
+function openDiagModal(){
+  const today=new Date().toISOString().slice(0,10);
+  g('d-date').value=today;
+  ['d-complaint','d-diag','d-treatment','d-doctor','d-notes'].forEach(f=>{if(g(f))g(f).value='';});
+  openM('diag-modal');
+}
 function renderDiagList(records){
   const el=g('diag-list'); if(!el) return;
-  el.innerHTML=records.length?records.map(d=>`<div class="prescription-card"><h4>🔬 ${esc(d.diagnosis)} <span style="font-size:.7rem;color:var(--t3);font-weight:400">${d.date||''}</span></h4>${d.doctor?`<div style="font-size:.8rem;color:var(--t3)">Dr. ${esc(d.doctor)}</div>`:''}${d.notes?`<div style="font-size:.82rem;color:var(--t2);margin-top:5px">${esc(d.notes)}</div>`:''}</div>`).join('')
-  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:20px">No diagnosis records</div>';
+  el.innerHTML=records.length?records.map(d=>`
+    <div class="rec-card">
+      <div class="rec-card-head">
+        <div>
+          <div class="rec-card-title">🔬 ${esc(d.diagnosis)}</div>
+          ${d.complaint?`<div class="rec-card-sub">Complaint: ${esc(d.complaint)}</div>`:''}
+        </div>
+        <div class="rec-card-date">${d.date||''}</div>
+      </div>
+      ${d.doctor?`<div class="rec-card-sub" style="margin-bottom:4px">👨‍⚕️ ${esc(d.doctor)}</div>`:''}
+      ${d.treatment?`<div class="rec-card-body">Treatment: ${esc(d.treatment)}</div>`:''}
+      ${d.notes?`<div class="rec-card-body" style="margin-top:4px">${esc(d.notes)}</div>`:''}
+    </div>`).join('')
+  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:24px;background:#fff;border-radius:12px;border:1px solid var(--bord)">No diagnosis records yet</div>';
 }
 
 // ── PRESCRIPTION ───────────────────────────────────
@@ -3193,18 +3360,81 @@ function renderRxList(records){
 }
 
 // ── LAB ────────────────────────────────────────────
-function openLabModal(){ g('lab-date').value=new Date().toISOString().slice(0,10); ['lab-test','lab-result','lab-notes'].forEach(f=>g(f).value=''); g('lab-status').value='requested'; openM('lab-modal'); }
+let LAB_TYPE='request';
+function openLabModal(type){
+  LAB_TYPE=type||'request';
+  g('lab-date').value=new Date().toISOString().slice(0,10);
+  ['lab-test','lab-result','lab-notes'].forEach(f=>{if(g(f))g(f).value='';});
+  if(g('lab-status')) g('lab-status').value='requested';
+  // Show/hide result field based on type
+  const resRow=g('lab-result-row');
+  if(resRow) resRow.style.display=LAB_TYPE==='result'?'block':'none';
+  const mh=document.querySelector('#lab-modal .mh h3');
+  if(mh) mh.textContent=LAB_TYPE==='result'?'📋 Add Lab Result':'🧪 Lab Request';
+  openM('lab-modal');
+}
 async function saveLab(){
   const b=BID||ME?.buyerId; if(!b||!CURRENT_PATIENT) return;
   const test=g('lab-test').value.trim(); if(!test){toast('Enter test name','e');return;}
-  const data={date:g('lab-date').value,test,status:g('lab-status').value,result:g('lab-result').value.trim(),notes:g('lab-notes').value.trim(),recordedBy:ME.name||'Staff',timestamp:firebase.firestore.FieldValue.serverTimestamp()};
-  try{await db.collection('buyers').doc(b).collection('patients').doc(CURRENT_PATIENT.id).collection('labs').add(data);closeM('lab-modal');toast('Lab saved!','s');loadPatientTab('lab');}
-  catch(e){toast('Failed: '+e.message,'e');}
+  const data={date:g('lab-date').value,test,
+    status:LAB_TYPE==='result'?'completed':(g('lab-status')?.value||'requested'),
+    result:LAB_TYPE==='result'?(g('lab-result')?.value.trim()||''):'',
+    notes:g('lab-notes')?.value.trim()||'',
+    recordType:LAB_TYPE,
+    recordedBy:ME.name||'Staff',
+    timestamp:firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try{
+    await db.collection('buyers').doc(b).collection('patients').doc(CURRENT_PATIENT.id).collection('labs').add(data);
+    closeM('lab-modal');
+    toast(LAB_TYPE==='result'?'Lab result saved!':'Lab request saved!','s');
+    loadPatientTab(LAB_TYPE==='result'?'labres':'labreq');
+  }catch(e){toast('Failed: '+e.message,'e');}
 }
-function renderLabList(records){
-  const el=g('lab-list'); if(!el) return;
-  el.innerHTML=records.length?records.map(l=>`<div class="prescription-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><h4 style="margin:0">🧪 ${esc(l.test)}</h4><span class="bdg ${l.status==='completed'?'bdg-g':l.status==='pending'?'bdg-a':'bdg-b'}">${l.status}</span></div><div style="font-size:.78rem;color:var(--t3);margin-bottom:4px">${l.date||''}</div>${l.result?`<div style="font-size:.85rem;color:var(--navy);background:var(--bg);border-radius:7px;padding:8px;margin-top:4px"><strong>Result:</strong> ${esc(l.result)}</div>`:''}</div>`).join('')
-  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:20px">No lab records</div>';
+function renderLabList(records){ /* legacy */ }
+
+function renderLabReqList(records){
+  const el=g('labreq-list'); if(!el) return;
+  el.innerHTML=records.length?records.map(l=>`
+    <div class="rec-card">
+      <div class="rec-card-head">
+        <div class="rec-card-title">🧪 ${esc(l.test)}</div>
+        <span class="lab-status-badge ${l.status==='completed'?'lab-done':l.status==='pending'?'lab-pend':'lab-req'}">${l.status||'requested'}</span>
+      </div>
+      <div class="rec-card-date" style="margin-bottom:6px">${l.date||''}</div>
+      ${l.notes?`<div class="rec-card-sub">${esc(l.notes)}</div>`:''}
+      <div style="margin-top:8px">
+        <select style="font-size:.78rem;padding:4px 8px;border:1px solid var(--bord);border-radius:7px;background:var(--surf);color:var(--t2)" onchange="updateLabStatus('${l.id}',this.value)">
+          <option ${l.status==='requested'?'selected':''} value="requested">Requested</option>
+          <option ${l.status==='pending'?'selected':''} value="pending">Pending</option>
+          <option ${l.status==='completed'?'selected':''} value="completed">Completed</option>
+        </select>
+      </div>
+    </div>`).join('')
+  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:24px;background:#fff;border-radius:12px;border:1px solid var(--bord)">No lab requests yet</div>';
+}
+
+function renderLabResList(records){
+  const el=g('labres-list'); if(!el) return;
+  el.innerHTML=records.length?records.map(l=>`
+    <div class="rec-card">
+      <div class="rec-card-head">
+        <div class="rec-card-title">📋 ${esc(l.test)}</div>
+        <div class="rec-card-date">${l.date||''}</div>
+      </div>
+      ${l.result?`<div style="background:var(--bg);border-radius:8px;padding:10px;margin-top:6px;font-size:.85rem;color:var(--navy)"><strong>Result:</strong> ${esc(l.result)}</div>`:'<div class="rec-card-sub">No result entered yet</div>'}
+      ${l.notes?`<div class="rec-card-sub" style="margin-top:6px">${esc(l.notes)}</div>`:''}
+    </div>`).join('')
+  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:24px;background:#fff;border-radius:12px;border:1px solid var(--bord)">No lab results yet</div>';
+}
+
+async function updateLabStatus(labId, newStatus){
+  const b=BID||ME?.buyerId; if(!b||!CURRENT_PATIENT) return;
+  try{
+    await db.collection('buyers').doc(b).collection('patients').doc(CURRENT_PATIENT.id).collection('labs').doc(labId).update({status:newStatus});
+    toast('Status updated','s');
+    loadPatientTab('labreq');
+  }catch(e){toast('Failed: '+e.message,'e');}
 }
 
 // ── NOTES ──────────────────────────────────────────
@@ -3218,8 +3448,16 @@ async function saveNote(){
 }
 function renderNoteList(records){
   const el=g('note-list'); if(!el) return;
-  el.innerHTML=records.length?records.map(n=>`<div class="prescription-card"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.78rem;color:var(--t3)">${n.date||''}</span><span style="font-size:.78rem;color:var(--t3)">By: ${esc(n.writtenBy||'—')}</span></div><div style="font-size:.87rem;color:var(--t2)">${esc(n.note)}</div></div>`).join('')
-  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:20px">No notes</div>';
+  el.innerHTML=records.length?records.map(n=>`
+    <div class="rec-card">
+      <div class="rec-card-head">
+        <div class="rec-card-title">📝 Clinical Note</div>
+        <div class="rec-card-date">${n.date||''}</div>
+      </div>
+      <div class="rec-card-body">${esc(n.note)}</div>
+      <div class="rec-card-sub" style="margin-top:6px">By: ${esc(n.writtenBy||'—')}</div>
+    </div>`).join('')
+  :'<div style="text-align:center;color:var(--t3);font-size:.84rem;padding:24px;background:#fff;border-radius:12px;border:1px solid var(--bord)">No clinical notes yet</div>';
 }
 
 // ── PATIENT SALES ──────────────────────────────────
